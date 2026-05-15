@@ -401,7 +401,7 @@
       </div>
     </div>
 
-    <div class="home-divider"><span>HOW IT WORKS</span></div>
+    <div class="home-divider" id="guideDivider"><span>HOW IT WORKS</span></div>
 
     <details class="guide" id="guide">
       <summary>
@@ -499,7 +499,7 @@ OhWisey/<br>
         supabase.auth.onAuthStateChange((_event, sess) => {
           session = sess;
           if (sess) onSignedIn();
-          else setSyncStatus('configured');
+          else { setSyncStatus('configured'); render(); }
           renderSettings();
         });
         const { data: { session: existing } } = await supabase.auth.getSession();
@@ -606,14 +606,27 @@ OhWisey/<br>
       document.getElementById('date').textContent = fmtDate();
       document.getElementById('count').textContent = state.apps.length;
 
+      const isSignedIn = !!session;
       const sub = document.getElementById('heroSub');
-      if (state.apps.length === 0) {
-        sub.textContent = 'Replace the apps you pay for with single-file tools you own. Build them, ship them, link them here.';
-      } else if (state.apps.length === 1) {
-        sub.textContent = 'One down. Build the next one and link it.';
+      if (isSignedIn) {
+        sub.textContent = state.apps.length === 0
+          ? 'Build your first standalone and link it here.'
+          : `${state.apps.length} tool${state.apps.length === 1 ? '' : 's'} synced across your devices.`;
       } else {
-        sub.textContent = `${state.apps.length} tools, zero subscriptions. Keep building.`;
+        if (state.apps.length === 0) {
+          sub.textContent = 'Replace the apps you pay for with single-file tools you own. Build them, ship them, link them here.';
+        } else if (state.apps.length === 1) {
+          sub.textContent = 'One down. Build the next one and link it.';
+        } else {
+          sub.textContent = `${state.apps.length} tools, zero subscriptions. Keep building.`;
+        }
       }
+
+      // Personal mode: hide the tutorial section once signed in.
+      const guide = document.getElementById('guide');
+      const guideDivider = document.getElementById('guideDivider');
+      if (guide) guide.style.display = isSignedIn ? 'none' : '';
+      if (guideDivider) guideDivider.style.display = isSignedIn ? 'none' : '';
 
       const region = document.getElementById('appsRegion');
       if (state.apps.length === 0) {
@@ -749,6 +762,7 @@ OhWisey/<br>
       session = null;
       setSyncStatus('configured');
       renderSettings();
+      render();
       toast('Signed out.');
     }
 
