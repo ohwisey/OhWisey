@@ -73,3 +73,15 @@ create policy "delete own app_data"
   using (auth.uid() = user_id);
 
 create index if not exists app_data_user_app_idx on public.app_data (user_id, app_slug);
+
+-- ─────────────────────────────────────────────────────────────
+-- Role grants
+--
+-- RLS controls which ROWS each signed-in user can see/modify.
+-- Grants control whether a role can hit the table AT ALL.
+-- Without these, signed-in users hit a 403 even with correct policies.
+-- ─────────────────────────────────────────────────────────────
+
+grant usage on schema public to authenticated;
+grant select, insert, update, delete on public.dashboard_config to authenticated;
+grant select, insert, update, delete on public.app_data         to authenticated;
