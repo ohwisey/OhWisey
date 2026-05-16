@@ -786,7 +786,11 @@
         if (splitlogMounted) return;
         splitlogMounted = true;
         const userId = window.OhWisey.userId;
-        const opts = { mode: 'embed', view: 'today', userId };
+        // view: 'today' was unstable — bundle rendered the expanded state
+        // empty. Omit the view option so the bundle defaults to 'full' and
+        // renders the working 7-day grid inline. Reintroduce 'today' once
+        // the compact-widget bug is fixed in splitlog.
+        const opts = { mode: 'embed', userId };
         if (userId && window.OhWisey.supabase) opts.supabaseClient = window.OhWisey.supabase;
         try {
           window.SplitLog.mount(root, opts);
