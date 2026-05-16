@@ -1,44 +1,17 @@
 -- ─────────────────────────────────────────────────────────────
--- Oh Wisey · dashboard schema
+-- Oh Wisey · Supabase schema
 --
 -- Run this in your Supabase project: SQL Editor → New query → paste → Run.
--- It's safe to run twice (uses `if not exists` / `create or replace`).
+-- Safe to run twice (uses `if not exists` / `drop policy if exists`).
+--
+-- The dashboard tile list lives in CODE (the TILES array in index.html).
+-- This schema only sets up what STANDALONES need to sync their own data
+-- (workouts, sleep, weights, etc.) across the user's devices.
 -- ─────────────────────────────────────────────────────────────
 
--- One row per signed-in user. Holds the tile list for their dashboard.
-create table if not exists public.dashboard_config (
-  user_id     uuid primary key references auth.users(id) on delete cascade,
-  apps        jsonb not null default '[]'::jsonb,
-  updated_at  timestamptz not null default now()
-);
-
--- Lock it down: users can only read/write their own row.
-alter table public.dashboard_config enable row level security;
-
-drop policy if exists "select own dashboard"  on public.dashboard_config;
-drop policy if exists "insert own dashboard"  on public.dashboard_config;
-drop policy if exists "update own dashboard"  on public.dashboard_config;
-drop policy if exists "delete own dashboard"  on public.dashboard_config;
-
-create policy "select own dashboard"
-  on public.dashboard_config for select
-  using (auth.uid() = user_id);
-
-create policy "insert own dashboard"
-  on public.dashboard_config for insert
-  with check (auth.uid() = user_id);
-
-create policy "update own dashboard"
-  on public.dashboard_config for update
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
-create policy "delete own dashboard"
-  on public.dashboard_config for delete
-  using (auth.uid() = user_id);
-
--- Optional: generic key-value table any standalone can use to sync its own data.
--- Workout logger, water tracker, sleep log — each gets its own (app_slug, key) namespace.
+-- Generic key-value store any standalone can use to sync its data.
+-- Workout logger, water tracker, sleep log — each picks an app_slug
+-- and writes (key, value) pairs scoped to the signed-in user.
 create table if not exists public.app_data (
   user_id     uuid not null references auth.users(id) on delete cascade,
   app_slug    text not null,
@@ -83,5 +56,12 @@ create index if not exists app_data_user_app_idx on public.app_data (user_id, ap
 -- ─────────────────────────────────────────────────────────────
 
 grant usage on schema public to authenticated;
-grant select, insert, update, delete on public.dashboard_config to authenticated;
-grant select, insert, update, delete on public.app_data         to authenticated;
+grant select, insert, update, delete on public.app_data to authenticated;
+
+-- ─────────────────────────────────────────────────────────────
+-- Cleanup (only needed if you ran an earlier version of this schema
+-- that created public.dashboard_config — that table is no longer used).
+-- Safe to run; no-op if the table doesn't exist.
+-- ─────────────────────────────────────────────────────────────
+
+drop table if exists public.dashboard_config;

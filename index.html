@@ -351,36 +351,10 @@
 
       <div class="settings-block hidden" id="signedInBlock">
         <div class="settings-label">SIGNED IN</div>
-        <p class="sub">Signed in as <strong id="userEmail" style="color:var(--text)"></strong>. Your tiles sync automatically.</p>
+        <p class="sub">Signed in as <strong id="userEmail" style="color:var(--text)"></strong>. Standalones inherit this session for cross-device data sync.</p>
         <div class="actions">
           <button class="btn-neutral" id="signOutBtn">Sign out</button>
           <button class="btn-neutral" id="closeSettingsBtn2">Close</button>
-        </div>
-      </div>
-
-      <div class="settings-block" id="addAppBlock">
-        <div class="settings-label">ADD STANDALONE</div>
-        <p class="sub">Drop the folder next to this file, then point a tile at it.</p>
-        <div class="field">
-          <label>Name</label>
-          <input id="f-name" placeholder="Workout Logger" autocomplete="off" />
-        </div>
-        <div class="row-2">
-          <div class="field">
-            <label>Icon</label>
-            <input id="f-icon" placeholder="🏋️" maxlength="2" autocomplete="off" />
-          </div>
-          <div class="field">
-            <label>Path</label>
-            <input id="f-path" placeholder="./workout-logger-standalone/index.html" autocomplete="off" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Description (optional)</label>
-          <input id="f-desc" placeholder="Log sets, reps, and PRs" autocomplete="off" />
-        </div>
-        <div class="actions">
-          <button class="btn-primary" id="saveAppBtn">Add tile</button>
         </div>
       </div>
     </section>
@@ -406,39 +380,40 @@
         <p>You don't need ten apps. You need one folder. This dashboard is the hub — each standalone is a single HTML file in its own folder right next to it.</p>
 
         <ol>
-          <li><strong>Save this file.</strong> Drop <code>index.html</code> into any folder on your computer. That's your hub.</li>
-          <li><strong>Build a standalone.</strong> Make a folder like <code>workout-logger-standalone/</code> next to <code>index.html</code> and put your app's <code>index.html</code> inside. One file. Inline CSS, inline JS, <code>localStorage</code> for state. No build step.</li>
-          <li><strong>Link it.</strong> Tap the ⚙ gear → <em>Add standalone</em>. Give it a name, an emoji, and the path (e.g. <code>./workout-logger-standalone/index.html</code>).</li>
-          <li><strong>Open it.</strong> Click the tile. The standalone runs on its own — your data stays in the browser.</li>
-          <li><strong>Ship it.</strong> Push the folder to GitHub, deploy on Vercel free tier, share the link.</li>
+          <li><strong>Fork the repo.</strong> Drop <code>index.html</code> into any folder, or fork <a href="https://github.com/ohwisey/OhWisey" target="_blank" style="color:var(--mint)">the GitHub repo</a> to start from this exact template.</li>
+          <li><strong>Build a standalone.</strong> One HTML file, inline CSS, inline JS, <code>localStorage</code> (or Supabase) for state. No bundler. No npm. Host it anywhere — sibling folder, GitHub Pages, Vercel, your own domain.</li>
+          <li><strong>Add it to the dashboard.</strong> Open <code>index.html</code>, find the <code>TILES</code> array at the top of the script, add a new entry with <code>name</code>, <code>icon</code>, <code>url</code>, <code>desc</code>.</li>
+          <li><strong>Push to git.</strong> <code>git add . && git commit -m "add my standalone" && git push</code>. Vercel redeploys in ~20s.</li>
+          <li><strong>Open it.</strong> Click the tile. Your standalone runs on its own — data either local or synced via Supabase.</li>
         </ol>
 
-        <h4>FOLDER STRUCTURE</h4>
+        <h4>WHY THIS WAY</h4>
+        <p>Most dashboards let you "add tiles" through a UI that writes to a database. That database becomes the lock-in. Here, the tile list lives in code — version controlled, forkable, readable. Adding a tile <em>is</em> the act of pushing to git. Newbies learn the workflow by doing it once.</p>
+
+        <h4>TILE SHAPE</h4>
         <div class="codeblock">
-OhWisey/<br>
-├── index.html  <span class="c-mint">← this dashboard</span><br>
-├── workout-logger-standalone/<br>
-│   └── index.html  <span class="c-mint">← your standalone</span><br>
-├── water-tracker-standalone/<br>
-│   └── index.html<br>
-└── sleep-log-standalone/<br>
-    └── index.html
+<span class="c-mint">// In index.html, near the top of &lt;script&gt;</span><br>
+const TILES = [<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name: <span class="c-mint">'Workout Logger'</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;icon: <span class="c-mint">'🏋️'</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;url:&nbsp;&nbsp;<span class="c-mint">'./workout-logger/'</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;desc: <span class="c-mint">'Log sets, reps, and PRs'</span>,<br>
+&nbsp;&nbsp;},<br>
+];
         </div>
 
-        <h4>SYNC ACROSS DEVICES</h4>
-        <p>By default the dashboard works fully offline — tiles save to your browser's <code>localStorage</code>. To sync across phone + laptop + iPad: hit the gear icon above, paste your Supabase URL and anon key, and sign in with magic-link email.</p>
+        <h4>OPTIONAL: SUPABASE FOR YOUR STANDALONES</h4>
+        <p>The dashboard signs you into Supabase. Your standalones inherit that session via <code>window.opener?.ohwisey?.session</code> — meaning workout logs, sleep data, etc. sync across devices without each standalone needing its own auth flow.</p>
         <div class="callout">
-          <strong>Don't have Supabase yet?</strong> See <a href="./SETUP.md" target="_blank" style="color:var(--mint)">SETUP.md</a> — 10-minute walkthrough that creates the project, runs the schema, and gets you signed in.
+          <strong>Setup:</strong> see <a href="./SETUP.md" target="_blank" style="color:var(--mint)">SETUP.md</a> — 10-minute walkthrough to deploy to Vercel + connect Supabase. Auth-only; tile list lives in code.
         </div>
-
-        <h4>ONE TIP</h4>
-        <p>Namespace your <code>localStorage</code> keys per standalone (e.g. <code>workout.log.2026-05-15</code>) so two apps in the same browser never collide.</p>
       </div>
     </details>
 
     <footer class="footer">
-      <span id="footerStatus">v1 · local only</span>
-      <a id="exportLink">Export data</a>
+      <span id="footerStatus">v1 · not connected</span>
+      <a href="https://github.com/ohwisey/OhWisey" target="_blank">View source</a>
     </footer>
 
   </div>
@@ -448,28 +423,31 @@ OhWisey/<br>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-    // ── Keys ─────────────────────────────────
-    const LOCAL_KEY  = 'ohwisey.dashboard.apps';
-    const CONFIG_KEY = 'ohwisey.supabase.config';
+    // ─────────────────────────────────────────────────────────────
+    // EDIT HERE TO ADD A TILE
+    //
+    //   1. Build your standalone (single HTML file in its own folder, or
+    //      a separate repo deployed to GitHub Pages / Vercel).
+    //   2. Add a new object to TILES below.
+    //   3. git add . && git commit -m "feat: add <name>" && git push
+    //   4. Vercel redeploys in ~20s. Tile appears.
+    //
+    //   Fields: { name, icon, url, desc }
+    //   url can be a relative path (./my-app/index.html) or external URL.
+    // ─────────────────────────────────────────────────────────────
+    const TILES = [
+      {
+        name: 'SplitLog',
+        icon: '🏋️',
+        url:  'https://ohwisey.github.io/splitlog/',
+        desc: 'Workout split logger',
+      },
+    ];
 
-    // ── State ────────────────────────────────
-    let state = { apps: [] };
+    // ── Keys / state ─────────────────────────
+    const CONFIG_KEY = 'ohwisey.supabase.config';
     let supabase = null;
     let session = null;
-    let saveTimer = null;
-    let lastError = '';
-
-    // ── Storage helpers ──────────────────────
-    const loadLocal = () => {
-      try {
-        const raw = localStorage.getItem(LOCAL_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed.apps)) state.apps = parsed.apps;
-        }
-      } catch (e) {}
-    };
-    const saveLocal = () => localStorage.setItem(LOCAL_KEY, JSON.stringify(state));
 
     const loadConfig = () => {
       try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || 'null'); }
@@ -508,65 +486,18 @@ OhWisey/<br>
       renderSettings();
     }
 
-    async function onSignedIn() {
-      setSyncStatus('syncing');
-      try {
-        const { data, error } = await supabase
-          .from('dashboard_config')
-          .select('apps')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-        if (error) throw error;
-        if (data && Array.isArray(data.apps)) {
-          state.apps = data.apps;
-          saveLocal();
-        } else {
-          await pushCloud();
-        }
-        setSyncStatus('synced');
-        render();
-      } catch (e) {
-        console.error('cloud load', e);
-        setSyncStatus('error');
-        toast('Sync error. Working offline — changes saved locally.', true);
-      }
-    }
-
-    async function pushCloud() {
-      if (!supabase || !session) return;
-      setSyncStatus('syncing');
-      const { error } = await supabase
-        .from('dashboard_config')
-        .upsert({
-          user_id: session.user.id,
-          apps: state.apps,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id' });
-      if (error) {
-        console.error('cloud save', error);
-        setSyncStatus('error');
-        toast('Save failed. Will retry on next change.', true);
-      } else {
-        setSyncStatus('synced');
-      }
-    }
-
-    function scheduleSave() {
-      saveLocal();
-      if (session && supabase) {
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(pushCloud, 400);
-      }
+    function onSignedIn() {
+      setSyncStatus('synced');
+      render();
     }
 
     // ── UI status ────────────────────────────
     function setSyncStatus(s) {
       const labels = {
-        offline:    'Local only',
+        offline:    'Not connected',
         configured: 'Not signed in',
-        syncing:    'Syncing…',
-        synced:     `Synced${session?.user?.email ? ' · ' + session.user.email : ''}`,
-        error:      'Sync error'
+        synced:     `Signed in${session?.user?.email ? ' · ' + session.user.email : ''}`,
+        error:      'Connection error'
       };
       const stateClass = s === 'offline' ? '' : s;
       document.getElementById('syncDot').className = 'sync-dot ' + stateClass;
@@ -576,7 +507,7 @@ OhWisey/<br>
       const statusText = document.getElementById('statusText');
       if (statusText) statusText.textContent = labels[s] || '';
       const footer = document.getElementById('footerStatus');
-      if (footer) footer.textContent = s === 'synced' ? 'v1 · synced' : (s === 'offline' ? 'v1 · local only' : `v1 · ${labels[s].toLowerCase()}`);
+      if (footer) footer.textContent = s === 'synced' ? 'v1 · signed in' : (s === 'offline' ? 'v1 · not connected' : `v1 · ${labels[s].toLowerCase()}`);
     }
 
     function toast(msg, isError = false) {
@@ -598,22 +529,16 @@ OhWisey/<br>
 
     function render() {
       document.getElementById('date').textContent = fmtDate();
-      document.getElementById('count').textContent = state.apps.length;
+      document.getElementById('count').textContent = TILES.length;
 
       const isSignedIn = !!session;
       const sub = document.getElementById('heroSub');
-      if (isSignedIn) {
-        sub.textContent = state.apps.length === 0
-          ? 'Build your first standalone and link it here.'
-          : `${state.apps.length} tool${state.apps.length === 1 ? '' : 's'} synced across your devices.`;
+      if (TILES.length === 0) {
+        sub.textContent = 'Replace the apps you pay for with single-file tools you own. Build them, ship them, link them here.';
+      } else if (TILES.length === 1) {
+        sub.textContent = 'One tool, zero subscriptions. The TILES array in index.html is the whole story.';
       } else {
-        if (state.apps.length === 0) {
-          sub.textContent = 'Replace the apps you pay for with single-file tools you own. Build them, ship them, link them here.';
-        } else if (state.apps.length === 1) {
-          sub.textContent = 'One down. Build the next one and link it.';
-        } else {
-          sub.textContent = `${state.apps.length} tools, zero subscriptions. Keep building.`;
-        }
+        sub.textContent = `${TILES.length} tools, zero subscriptions. Edit the TILES array in index.html to add more.`;
       }
 
       // Personal mode: hide everything decorative when signed in — just tiles on black.
@@ -627,39 +552,23 @@ OhWisey/<br>
       if (guideDivider) guideDivider.style.display = isSignedIn ? 'none' : '';
 
       const region = document.getElementById('appsRegion');
-      if (state.apps.length === 0) {
-        if (isSignedIn) {
-          region.innerHTML = '';
-        } else {
-          region.innerHTML = `
-            <div class="empty">
-              <div class="empty-icon">◐</div>
-              <div class="empty-title">No standalones yet</div>
-              <div class="empty-sub">Build your first single-file app, drop its folder next to this dashboard, then add a tile pointing at it via the ⚙ gear.</div>
-              <button class="btn-primary" id="emptyAddBtn">Open settings</button>
-            </div>
-          `;
-          document.getElementById('emptyAddBtn').addEventListener('click', openSettings);
-        }
+      if (TILES.length === 0) {
+        region.innerHTML = isSignedIn ? '' : `
+          <div class="empty">
+            <div class="empty-icon">◐</div>
+            <div class="empty-title">No standalones yet</div>
+            <div class="empty-sub">Tiles live in the <code>TILES</code> array at the top of <code>index.html</code>. Edit, push to git, done.</div>
+          </div>
+        `;
       } else {
-        const tiles = state.apps.map((a, i) => `
-          <a class="tile" href="${escapeHtml(a.path)}">
-            <button class="tile-remove" data-i="${i}" title="Remove">×</button>
-            <div class="tile-icon">${escapeHtml(a.icon || '◆')}</div>
-            <div class="tile-name">${escapeHtml(a.name)}</div>
-            <div class="tile-desc">${escapeHtml(a.desc || '')}</div>
+        const tiles = TILES.map(t => `
+          <a class="tile" href="${escapeHtml(t.url)}">
+            <div class="tile-icon">${escapeHtml(t.icon || '◆')}</div>
+            <div class="tile-name">${escapeHtml(t.name)}</div>
+            <div class="tile-desc">${escapeHtml(t.desc || '')}</div>
           </a>
         `).join('');
         region.innerHTML = `<div class="grid">${tiles}</div>`;
-        region.querySelectorAll('.tile-remove').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.preventDefault(); e.stopPropagation();
-            const i = parseInt(btn.dataset.i, 10);
-            state.apps.splice(i, 1);
-            scheduleSave();
-            render();
-          });
-        });
       }
     }
 
@@ -679,24 +588,6 @@ OhWisey/<br>
       if (hasSession) {
         document.getElementById('userEmail').textContent = session.user.email || '';
       }
-    }
-
-    // ── Add/edit handlers ────────────────────
-    function saveApp() {
-      const name = document.getElementById('f-name').value.trim();
-      const icon = document.getElementById('f-icon').value.trim() || '◆';
-      let path  = document.getElementById('f-path').value.trim();
-      const desc = document.getElementById('f-desc').value.trim();
-      if (!name) { document.getElementById('f-name').focus(); return; }
-      if (!path) {
-        const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-        path = `./${slug}-standalone/index.html`;
-      }
-      state.apps.push({ name, icon, path, desc });
-      scheduleSave();
-      ['f-name','f-icon','f-path','f-desc'].forEach(id => document.getElementById(id).value = '');
-      render();
-      toast('Tile added.');
     }
 
     // ── Settings handlers ────────────────────
@@ -751,15 +642,6 @@ OhWisey/<br>
       toast('Signed out.');
     }
 
-    function handleExport(e) {
-      e.preventDefault();
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'ohwisey-dashboard.json'; a.click();
-      URL.revokeObjectURL(url);
-    }
-
     // ── Wire up ──────────────────────────────
     document.getElementById('settingsBtn').addEventListener('click', openSettings);
     document.getElementById('closeSettingsBtn1').addEventListener('click', closeSettings);
@@ -768,11 +650,11 @@ OhWisey/<br>
     document.getElementById('clearCfgBtn').addEventListener('click', handleClearConfig);
     document.getElementById('sendMagicBtn').addEventListener('click', handleSendMagic);
     document.getElementById('signOutBtn').addEventListener('click', handleSignOut);
-    document.getElementById('saveAppBtn').addEventListener('click', saveApp);
-    document.getElementById('exportLink').addEventListener('click', handleExport);
+
+    // Expose session for standalones to inherit (e.g. window.opener.ohwisey.session)
+    window.ohwisey = { get session() { return session; }, get supabase() { return supabase; } };
 
     // ── Boot ─────────────────────────────────
-    loadLocal();
     render();
     initCloud();
   </script>
