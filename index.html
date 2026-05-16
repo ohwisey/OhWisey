@@ -357,6 +357,32 @@
           <button class="btn-neutral" id="closeSettingsBtn2">Close</button>
         </div>
       </div>
+
+      <div class="settings-block" id="addAppBlock">
+        <div class="settings-label">ADD STANDALONE</div>
+        <p class="sub">Drop the folder next to this file, then point a tile at it.</p>
+        <div class="field">
+          <label>Name</label>
+          <input id="f-name" placeholder="Workout Logger" autocomplete="off" />
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>Icon</label>
+            <input id="f-icon" placeholder="🏋️" maxlength="2" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>Path</label>
+            <input id="f-path" placeholder="./workout-logger-standalone/index.html" autocomplete="off" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Description (optional)</label>
+          <input id="f-desc" placeholder="Log sets, reps, and PRs" autocomplete="off" />
+        </div>
+        <div class="actions">
+          <button class="btn-primary" id="saveAppBtn">Add tile</button>
+        </div>
+      </div>
     </section>
 
     <section class="hero" id="hero">
@@ -368,38 +394,6 @@
     <div class="home-divider" id="standalonesDivider"><span>STANDALONES</span></div>
 
     <div id="appsRegion"></div>
-
-    <div id="addForm" class="sheet hidden">
-      <h3>Add a standalone</h3>
-      <p class="sub">Drop the standalone's folder next to this file, then point a tile at it.</p>
-
-      <div class="field">
-        <label>Name</label>
-        <input id="f-name" placeholder="Workout Logger" autocomplete="off" />
-      </div>
-
-      <div class="row-2">
-        <div class="field">
-          <label>Icon</label>
-          <input id="f-icon" placeholder="🏋️" maxlength="2" autocomplete="off" />
-        </div>
-        <div class="field">
-          <label>Path</label>
-          <input id="f-path" placeholder="./workout-logger-standalone/index.html" autocomplete="off" />
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Description (optional)</label>
-        <input id="f-desc" placeholder="Log sets, reps, and PRs" autocomplete="off" />
-        <div class="hint">Shown under the tile name on hover.</div>
-      </div>
-
-      <div class="actions">
-        <button class="btn-primary" id="saveAppBtn">Add to dashboard</button>
-        <button class="btn-neutral" id="cancelAppBtn">Cancel</button>
-      </div>
-    </div>
 
     <div class="home-divider" id="guideDivider"><span>HOW IT WORKS</span></div>
 
@@ -414,7 +408,7 @@
         <ol>
           <li><strong>Save this file.</strong> Drop <code>index.html</code> into any folder on your computer. That's your hub.</li>
           <li><strong>Build a standalone.</strong> Make a folder like <code>workout-logger-standalone/</code> next to <code>index.html</code> and put your app's <code>index.html</code> inside. One file. Inline CSS, inline JS, <code>localStorage</code> for state. No build step.</li>
-          <li><strong>Link it.</strong> Hit <em>+ Add standalone</em> above. Give it a name, an emoji, and the path (e.g. <code>./workout-logger-standalone/index.html</code>).</li>
+          <li><strong>Link it.</strong> Tap the ⚙ gear → <em>Add standalone</em>. Give it a name, an emoji, and the path (e.g. <code>./workout-logger-standalone/index.html</code>).</li>
           <li><strong>Open it.</strong> Click the tile. The standalone runs on its own — your data stays in the browser.</li>
           <li><strong>Ship it.</strong> Push the folder to GitHub, deploy on Vercel free tier, share the link.</li>
         </ol>
@@ -635,25 +629,17 @@ OhWisey/<br>
       const region = document.getElementById('appsRegion');
       if (state.apps.length === 0) {
         if (isSignedIn) {
-          region.innerHTML = `
-            <div class="grid">
-              <a class="tile add" id="addTile" href="#">
-                <span class="plus">+</span>
-                <span class="lbl">ADD STANDALONE</span>
-              </a>
-            </div>
-          `;
-          document.getElementById('addTile').addEventListener('click', (e) => { e.preventDefault(); openAddForm(); });
+          region.innerHTML = '';
         } else {
           region.innerHTML = `
             <div class="empty">
               <div class="empty-icon">◐</div>
               <div class="empty-title">No standalones yet</div>
-              <div class="empty-sub">Build your first single-file app, drop its folder next to this dashboard, then add a tile pointing at it.</div>
-              <button class="btn-primary" id="emptyAddBtn">+ Add your first standalone</button>
+              <div class="empty-sub">Build your first single-file app, drop its folder next to this dashboard, then add a tile pointing at it via the ⚙ gear.</div>
+              <button class="btn-primary" id="emptyAddBtn">Open settings</button>
             </div>
           `;
-          document.getElementById('emptyAddBtn').addEventListener('click', openAddForm);
+          document.getElementById('emptyAddBtn').addEventListener('click', openSettings);
         }
       } else {
         const tiles = state.apps.map((a, i) => `
@@ -664,16 +650,7 @@ OhWisey/<br>
             <div class="tile-desc">${escapeHtml(a.desc || '')}</div>
           </a>
         `).join('');
-        region.innerHTML = `
-          <div class="grid">
-            ${tiles}
-            <a class="tile add" id="addTile" href="#">
-              <span class="plus">+</span>
-              <span class="lbl">ADD STANDALONE</span>
-            </a>
-          </div>
-        `;
-        document.getElementById('addTile').addEventListener('click', (e) => { e.preventDefault(); openAddForm(); });
+        region.innerHTML = `<div class="grid">${tiles}</div>`;
         region.querySelectorAll('.tile-remove').forEach(btn => {
           btn.addEventListener('click', (e) => {
             e.preventDefault(); e.stopPropagation();
@@ -705,15 +682,6 @@ OhWisey/<br>
     }
 
     // ── Add/edit handlers ────────────────────
-    function openAddForm() {
-      document.getElementById('addForm').classList.remove('hidden');
-      document.getElementById('f-name').focus();
-      document.getElementById('addForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    function closeAddForm() {
-      document.getElementById('addForm').classList.add('hidden');
-      ['f-name','f-icon','f-path','f-desc'].forEach(id => document.getElementById(id).value = '');
-    }
     function saveApp() {
       const name = document.getElementById('f-name').value.trim();
       const icon = document.getElementById('f-icon').value.trim() || '◆';
@@ -726,8 +694,9 @@ OhWisey/<br>
       }
       state.apps.push({ name, icon, path, desc });
       scheduleSave();
-      closeAddForm();
+      ['f-name','f-icon','f-path','f-desc'].forEach(id => document.getElementById(id).value = '');
       render();
+      toast('Tile added.');
     }
 
     // ── Settings handlers ────────────────────
@@ -800,7 +769,6 @@ OhWisey/<br>
     document.getElementById('sendMagicBtn').addEventListener('click', handleSendMagic);
     document.getElementById('signOutBtn').addEventListener('click', handleSignOut);
     document.getElementById('saveAppBtn').addEventListener('click', saveApp);
-    document.getElementById('cancelAppBtn').addEventListener('click', closeAddForm);
     document.getElementById('exportLink').addEventListener('click', handleExport);
 
     // ── Boot ─────────────────────────────────
