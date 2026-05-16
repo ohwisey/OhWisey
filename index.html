@@ -401,6 +401,169 @@
 
     .hidden { display: none !important; }
 
+    /* ── SplitLog inline · day picker ──────────────────────── */
+    .splitlog-region { margin-top: 56px; }
+    .splitlog-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 16px;
+    }
+    .splitlog-divider { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+    .splitlog-divider::before,
+    .splitlog-divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: rgba(255, 255, 255, 0.07);
+    }
+    .splitlog-divider span {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.25em;
+      text-transform: uppercase; color: #fff; white-space: nowrap;
+    }
+
+    .day-picker-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    @media (min-width: 640px) {
+      .day-picker-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 880px) {
+      .day-picker-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .day-tile-wrap { position: relative; }
+    .day-tile {
+      display: block; width: 100%;
+      background: rgba(20, 20, 22, 0.6);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 22px;
+      text-align: left;
+      min-height: 132px;
+      cursor: pointer;
+      color: #fff;
+      text-decoration: none;
+      transition: transform 0.2s var(--ease), opacity 0.2s var(--ease), box-shadow 0.3s var(--ease), border-color 0.2s var(--ease);
+      position: relative; overflow: hidden;
+      isolation: isolate;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+    .day-tile::before {
+      content: ''; position: absolute; inset: 0;
+      border-radius: inherit; pointer-events: none; z-index: -1;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 45%, rgba(0,0,0,0.18) 100%);
+    }
+    .day-tile:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 12px 32px rgba(0, 0, 0, 0.32);
+    }
+    .day-tile.pressing {
+      transform: scale(0.97);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+    }
+    .day-tile.completed {
+      border-color: rgba(62, 207, 142, 0.30);
+      background: rgba(62, 207, 142, 0.05);
+    }
+    .day-tile.rest { opacity: 0.85; }
+
+    .day-tile-num {
+      font-size: 11px; letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase; margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .day-tile-name {
+      font-size: 16px; font-weight: 600; color: #fff;
+      margin: 0 0 12px; line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+    .day-tile-tag {
+      font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase;
+      padding: 4px 8px; border-radius: 6px; display: inline-block; font-weight: 600;
+    }
+    .day-tile-count {
+      font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 8px;
+    }
+    .day-tile-edit {
+      position: absolute;
+      top: 12px; right: 12px;
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.3);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: inherit; font-size: 14px; cursor: pointer;
+      padding: 0; text-decoration: none;
+      transition: all 0.2s var(--ease);
+      z-index: 2;
+    }
+    .day-tile-edit:hover {
+      background: rgba(62, 207, 142, 0.10);
+      color: var(--mint);
+    }
+
+    .tag-heavy  { background: rgba(244, 114, 182, 0.12); color: #f472b6; }
+    .tag-medium { background: rgba(251, 191, 36, 0.12);  color: #fbbf24; }
+    .tag-light  { background: rgba(62, 207, 142, 0.12);  color: var(--mint); }
+    .tag-rest   { background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.45); }
+
+    .splitlog-foot {
+      display: flex; justify-content: center; margin-top: 14px;
+    }
+    .customize-link {
+      background: transparent; border: none;
+      color: rgba(255, 255, 255, 0.4);
+      font-family: inherit; font-size: 12px; font-weight: 500;
+      padding: 8px 14px; cursor: pointer;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      transition: color 0.2s var(--ease), transform 0.15s var(--ease);
+      border-radius: 8px;
+    }
+    .customize-link:hover { color: rgba(62, 207, 142, 0.85); }
+    .customize-link:active { color: var(--mint); transform: scale(0.97); }
+
+    .splitlog-empty {
+      background: rgba(20, 20, 22, 0.6);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px dashed rgba(255, 255, 255, 0.10);
+      border-radius: 24px;
+      padding: 40px 28px;
+      text-align: center;
+    }
+    .splitlog-empty-icon {
+      font-size: 30px;
+      margin-bottom: 14px;
+      filter: saturate(1.1);
+    }
+    .splitlog-empty-title {
+      font-size: 16px; font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .splitlog-empty-sub {
+      font-size: 13.5px;
+      color: var(--text-3);
+      line-height: 1.55;
+      margin-bottom: 20px;
+      max-width: 380px;
+      margin-left: auto; margin-right: auto;
+    }
+
     /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 480px) {
       .wrap { padding: 32px 18px 80px; }
@@ -412,6 +575,10 @@
       .tile { padding: 22px; min-height: 148px; border-radius: 22px; }
       .tile-icon { font-size: 26px; margin-bottom: 14px; }
       .sheet { padding: 24px; border-radius: 24px; }
+      .splitlog-region { margin-top: 44px; }
+      .day-tile { padding: 20px; border-radius: 18px; min-height: 124px; }
+      .day-tile-name { font-size: 15px; margin-bottom: 10px; }
+      .splitlog-empty { padding: 32px 22px; border-radius: 22px; }
       body {
         background-image:
           radial-gradient(ellipse 90% 35% at 50% -8%, rgba(62, 207, 142, 0.20) 0%, rgba(62, 207, 142, 0.06) 40%, transparent 70%);
@@ -483,6 +650,8 @@
       </div>
     </section>
 
+    <div class="splitlog-region" id="splitlogRegion"></div>
+
     <div class="tiles-region" id="tilesRegion"></div>
 
   </div>
@@ -493,13 +662,17 @@
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
     // ─────────────────────────────────────────────────────────────
+    // SplitLog — rendered inline as the dashboard's main view.
+    // Data comes from the same Supabase `app_data` table SplitLog writes to
+    // (app_slug = 'splitlog'). Tapping a day card opens SplitLog at that day.
+    // ─────────────────────────────────────────────────────────────
+    const SPLITLOG_URL = 'https://ohwisey.github.io/splitlog/';
+
+    // ─────────────────────────────────────────────────────────────
     // EDIT HERE TO ADD A TILE
     //
-    //   1. Build your standalone (single HTML file or a separate repo
-    //      deployed to GitHub Pages / Vercel).
-    //   2. Add an entry to TILES below.
-    //   3. git add . && git commit -m "feat: add <name>" && git push
-    //   4. Vercel redeploys in ~20s. Tile appears.
+    // Tiles below SplitLog. Each one is a single-file standalone you've shipped.
+    // Add an entry, git push — Vercel redeploys in ~20s.
     //
     //   Fields:
     //     slug      — matches the app_slug your standalone writes to
@@ -510,46 +683,15 @@
     //     desc      — one-line subtitle
     //     category  — fitness | rest | mind | nutrition | finance (tints the tile)
     // ─────────────────────────────────────────────────────────────
-    const TILES = [
-      {
-        slug:     'splitlog',
-        name:     'SplitLog',
-        icon:     '🏋️',
-        url:      'https://ohwisey.github.io/splitlog/',
-        desc:     'Workout split logger',
-        category: 'fitness',
-      },
-    ];
+    const TILES = [];
 
     // ─────────────────────────────────────────────────────────────
-    // WIDGET RENDERERS
-    //
+    // WIDGET RENDERERS — for the secondary TILES grid (when you add more).
     // Each function receives the user's data for that app_slug, shaped:
-    //   { '2026-05-16': <value>, '2026-05-17': <value>, ... }
-    //
-    // Return inline HTML to render inside the tile, or null to fall back
-    // to the default "no data yet" preview. Keep output compact — tiles
-    // are ~150-180px tall.
+    //   { '<key>': <value>, ... }
+    // Return inline HTML or null to fall back to the default preview.
     // ─────────────────────────────────────────────────────────────
-    const WIDGETS = {
-      splitlog: (data) => {
-        if (!data || Object.keys(data).length === 0) return null;
-        const d = new Date();
-        const todayKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-        const today = data[todayKey] || data.today || data.current;
-        if (!today) return null;
-        const day       = today.day ?? today.dayNumber ?? 1;
-        const dayName   = today.name || today.dayName || today.label || 'Session';
-        const exercises = today.exercises ?? (Array.isArray(today.lifts) ? today.lifts.length : 0);
-        const logged    = today.logged ?? (Array.isArray(today.lifts) ? today.lifts.filter(l => l.done).length : 0);
-        const inProgress = logged > 0 && (exercises === 0 || logged < exercises);
-        const dot = inProgress ? '<span class="widget-progress-dot"></span>' : '';
-        return `
-          <div class="widget-meta">DAY ${String(day).padStart(2, '0')} · ${escapeHtml(dayName)}</div>
-          <div class="widget-sub">${dot}${exercises} exercise${exercises === 1 ? '' : 's'} · ${logged} logged today</div>
-        `;
-      },
-    };
+    const WIDGETS = {};
 
     // ─────────────────────────────────────────────────────────────
     // State
@@ -558,6 +700,7 @@
     let supabase = null;
     let session  = null;
     let widgetCache = {};
+    let splitlogData = { split: null, completedByKey: {}, setupComplete: false };
     let dateTickTimer = null;
 
     const loadConfig  = () => { try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || 'null'); } catch (e) { return null; } };
@@ -585,7 +728,12 @@
         supabase.auth.onAuthStateChange((_e, sess) => {
           session = sess;
           if (sess) onSignedIn();
-          else { setSyncStatus('configured'); widgetCache = {}; render(); }
+          else {
+            setSyncStatus('configured');
+            widgetCache = {};
+            splitlogData = { split: null, completedByKey: {}, setupComplete: false };
+            render();
+          }
           renderSettings();
         });
         const { data: { session: existing } } = await supabase.auth.getSession();
@@ -608,7 +756,11 @@
     }
 
     async function fetchWidgetData() {
-      if (!supabase || !session) { widgetCache = {}; return; }
+      if (!supabase || !session) {
+        widgetCache = {};
+        splitlogData = { split: null, completedByKey: {}, setupComplete: false };
+        return;
+      }
       try {
         const { data, error } = await supabase
           .from('app_data')
@@ -621,10 +773,121 @@
           byApp[row.app_slug][row.key] = row.value;
         }
         widgetCache = byApp;
+        splitlogData = parseSplitlogState(byApp.splitlog || {});
       } catch (e) {
-        console.error('widget fetch', e);
+        console.error('app_data fetch', e);
         widgetCache = {};
+        splitlogData = { split: null, completedByKey: {}, setupComplete: false };
       }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // SplitLog state parser
+    // Tolerant of multiple plausible Supabase schemas:
+    //   A) single row { key: 'state', value: { split: [...], completed: {...}, ... } }
+    //   B) raw localStorage namespace dump   { 'splitlog.config': [...], 'splitlog.completed.YYYY-MM-DD.N': {...} }
+    //   C) namespace-stripped               { 'config': [...], 'completed.YYYY-MM-DD.N': {...} }
+    //
+    // Values may be parsed JSON or raw strings — we tolerate both.
+    // ─────────────────────────────────────────────────────────────
+    function parseSplitlogState(rows) {
+      const out = { split: null, completedByKey: {}, setupComplete: false };
+      if (!rows || typeof rows !== 'object') return out;
+
+      const tryParse = (v) => {
+        if (Array.isArray(v) || (v && typeof v === 'object')) return v;
+        if (typeof v === 'string') { try { return JSON.parse(v); } catch { return v; } }
+        return v;
+      };
+
+      // Shape A — single state blob
+      const blob = rows.state;
+      if (blob && typeof blob === 'object') {
+        if (Array.isArray(blob.split)) out.split = blob.split;
+        else if (blob['splitlog.config']) out.split = tryParse(blob['splitlog.config']);
+        else if (blob.config) out.split = tryParse(blob.config);
+
+        if (blob.completed && typeof blob.completed === 'object') {
+          out.completedByKey = blob.completed;
+        } else {
+          for (const [k, v] of Object.entries(blob)) {
+            const m = k.match(/^(?:splitlog\.)?completed\.(.+)$/);
+            if (m) out.completedByKey[m[1]] = tryParse(v);
+          }
+        }
+        if (blob.setupComplete === true || blob.setupComplete === 'true') out.setupComplete = true;
+        if (blob['splitlog.setupComplete'] === 'true') out.setupComplete = true;
+      }
+
+      // Shapes B & C — per-key rows
+      for (const [k, v] of Object.entries(rows)) {
+        if (k === 'state') continue;
+        if (k === 'config' || k === 'split' || k === 'splitlog.config') {
+          if (!out.split) out.split = tryParse(v);
+        } else if (k.startsWith('completed.') || k.startsWith('splitlog.completed.')) {
+          const suffix = k.replace(/^(?:splitlog\.)?completed\./, '');
+          out.completedByKey[suffix] = tryParse(v);
+        } else if (k === 'setupComplete' || k === 'splitlog.setupComplete') {
+          if (v === true || v === 'true') out.setupComplete = true;
+        }
+      }
+
+      // Normalize split entries (mirrors splitlog's getSplit() shape)
+      if (Array.isArray(out.split)) {
+        out.split = out.split.map(d => ({
+          name: d?.name || 'Day',
+          type: d?.type || 'HEAVY',
+          category: d?.category || detectCategoryFallback(d?.name, d?.type),
+          exercises: Array.isArray(d?.exercises) ? d.exercises : [],
+        }));
+      } else {
+        out.split = null;
+      }
+      return out;
+    }
+
+    function detectCategoryFallback(name, type) {
+      const n = String(name || '').toLowerCase();
+      if (String(type || '').toUpperCase() === 'RECOVERY') return 'rest';
+      if (/rest|recovery/.test(n)) return 'rest';
+      if (/push/.test(n)) return 'push';
+      if (/pull/.test(n)) return 'pull';
+      if (/legs?|quad|ham/.test(n)) return 'legs';
+      if (/upper/.test(n)) return 'upper';
+      if (/lower/.test(n)) return 'lower';
+      if (/full/.test(n)) return 'full';
+      return 'full';
+    }
+
+    function tagClass(type) {
+      switch (String(type || '').toUpperCase()) {
+        case 'HEAVY':    return 'tag-heavy';
+        case 'VOLUME':   return 'tag-medium';
+        case 'RECOVERY': return 'tag-rest';
+        default:         return 'tag-light';
+      }
+    }
+    function tagLabel(type) {
+      switch (String(type || '').toUpperCase()) {
+        case 'HEAVY':    return 'HEAVY';
+        case 'VOLUME':   return 'VOLUME';
+        case 'RECOVERY': return 'REST';
+        default:         return String(type || '').toUpperCase();
+      }
+    }
+    function todayKeyStr() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    function isCompletedToday(dayNum) {
+      const k = todayKeyStr() + '.' + dayNum;
+      return !!splitlogData.completedByKey[k];
+    }
+    function splitlogDayHref(dayNum) {
+      return SPLITLOG_URL + '?day=' + dayNum;
+    }
+    function splitlogEditHref(dayNum) {
+      return SPLITLOG_URL + '?day=' + dayNum + '&edit=1';
     }
 
     function setSyncStatus(s) {
@@ -684,16 +947,104 @@
       greeting.textContent = `${greetingForHour(hour)}${name ? ', ' + name : ''}`;
       dateLine.textContent = fmtFullDate();
 
-      const region = document.getElementById('tilesRegion');
-      region.innerHTML = `<div class="grid">${TILES.map(renderTile).join('')}</div>`;
+      renderSplitlogRegion();
 
-      // Tactile press feedback
-      region.querySelectorAll('.tile').forEach(el => {
+      const region = document.getElementById('tilesRegion');
+      region.innerHTML = TILES.length === 0
+        ? ''
+        : `<div class="grid">${TILES.map(renderTile).join('')}</div>`;
+
+      // Tactile press feedback for all tiles (SplitLog day-tiles + secondary TILES)
+      document.querySelectorAll('.tile, .day-tile').forEach(el => {
+        if (el._pressBound) return;
+        el._pressBound = true;
         const press = () => el.classList.add('pressing');
         const release = () => el.classList.remove('pressing');
         el.addEventListener('mousedown', press);
         el.addEventListener('touchstart', press, { passive: true });
         ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev => el.addEventListener(ev, release));
+      });
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // SplitLog inline render — exactly mirrors splitlog's TODAY'S SESSION
+    // day-picker layout. Tapping a card opens splitlog at that day.
+    // ─────────────────────────────────────────────────────────────
+    function renderSplitlogRegion() {
+      const region = document.getElementById('splitlogRegion');
+      if (!region) return;
+
+      // Not signed in → soft prompt with a link to splitlog
+      if (!session) {
+        region.innerHTML = `
+          <div class="splitlog-header">
+            <div class="splitlog-divider"><span>TODAY'S SESSION</span></div>
+          </div>
+          <div class="splitlog-empty">
+            <div class="splitlog-empty-icon">🏋️</div>
+            <div class="splitlog-empty-title">Sign in to see your split</div>
+            <div class="splitlog-empty-sub">Your workout days sync from SplitLog once you connect Supabase and sign in.</div>
+            <a class="customize-link" href="${SPLITLOG_URL}" style="border:1px solid rgba(62, 207, 142, 0.25); color: var(--mint); padding: 10px 16px; border-radius: 12px;">Open SplitLog →</a>
+          </div>
+        `;
+        return;
+      }
+
+      // Signed in, no split set up yet → invite to set up in splitlog
+      if (!Array.isArray(splitlogData.split) || splitlogData.split.length === 0) {
+        region.innerHTML = `
+          <div class="splitlog-header">
+            <div class="splitlog-divider"><span>TODAY'S SESSION</span></div>
+          </div>
+          <div class="splitlog-empty">
+            <div class="splitlog-empty-icon">🏋️</div>
+            <div class="splitlog-empty-title">No split yet</div>
+            <div class="splitlog-empty-sub">Set up your weekly split in SplitLog — once you save it, the days appear here ready to log.</div>
+            <a class="customize-link" href="${SPLITLOG_URL}" style="border:1px solid rgba(62, 207, 142, 0.25); color: var(--mint); padding: 10px 16px; border-radius: 12px;">Set up in SplitLog →</a>
+          </div>
+        `;
+        return;
+      }
+
+      // Signed in with split → render the day cards
+      const tiles = splitlogData.split.map((d, i) => {
+        const n = String(i + 1).padStart(2, '0');
+        const dayNum = i + 1;
+        const isRest = (d.category === 'rest') || String(d.type || '').toUpperCase() === 'RECOVERY';
+        const exCount = (d.exercises || []).length;
+        const completed = isCompletedToday(dayNum);
+        const exNote = isRest
+          ? ''
+          : `<div class="day-tile-count">${completed ? '✓ logged today' : (exCount ? exCount + ' exercises' : 'Tap to set up')}</div>`;
+        const editBtn = isRest
+          ? ''
+          : `<a class="day-tile-edit" href="${splitlogEditHref(dayNum)}" title="Edit day ${n}" aria-label="Edit day ${n}" data-day-edit="${dayNum}">✎</a>`;
+        return `<div class="day-tile-wrap">
+          <a class="day-tile${completed ? ' completed' : ''}${isRest ? ' rest' : ''}" href="${splitlogDayHref(dayNum)}" data-day="${dayNum}" aria-label="Day ${n}: ${escapeHtml(d.name)}">
+            <div class="day-tile-num">Day ${n}</div>
+            <div class="day-tile-name">${escapeHtml(d.name)}</div>
+            <span class="day-tile-tag ${tagClass(d.type)}">${tagLabel(d.type)}</span>
+            ${exNote}
+          </a>
+          ${editBtn}
+        </div>`;
+      }).join('');
+
+      region.innerHTML = `
+        <div class="splitlog-header">
+          <div class="splitlog-divider"><span>TODAY'S SESSION</span></div>
+        </div>
+        <div class="day-picker-grid">${tiles}</div>
+        <div class="splitlog-foot">
+          <a class="customize-link" href="${SPLITLOG_URL}">Open SplitLog →</a>
+        </div>
+      `;
+
+      // The edit pencil sits inside the day-tile-wrap as a sibling to the day-tile
+      // anchor. Stop its clicks from bubbling so they don't also follow the
+      // wrapping anchor's href.
+      region.querySelectorAll('.day-tile-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => e.stopPropagation());
       });
     }
 
@@ -749,7 +1100,9 @@
     async function handleClearConfig() {
       if (session && supabase) await supabase.auth.signOut();
       clearConfig();
-      supabase = null; session = null; widgetCache = {};
+      supabase = null; session = null;
+      widgetCache = {};
+      splitlogData = { split: null, completedByKey: {}, setupComplete: false };
       setSyncStatus('offline');
       renderSettings(); render();
       toast('Disconnected.');
@@ -776,7 +1129,9 @@
     }
     async function handleSignOut() {
       if (supabase) await supabase.auth.signOut();
-      session = null; widgetCache = {};
+      session = null;
+      widgetCache = {};
+      splitlogData = { split: null, completedByKey: {}, setupComplete: false };
       setSyncStatus('configured');
       renderSettings(); render();
       toast('Signed out.');
