@@ -401,9 +401,75 @@
 
     .hidden { display: none !important; }
 
-    /* ── Embedded SplitLog mount point ───────────────────────
-       The bundle owns its own styles. We just give it room. */
-    #splitlog-root { display: block; margin-top: 48px; }
+    /* ── Dashboard grid · the canonical place new standalones land ─
+       Cell 1: SplitLog (embedded via bundle into #splitlog-root)
+       Cell 2: dashed "Add a standalone" teaching placeholder
+       Future cells: drop more <section id="X-root"></section> mount
+       points into .dashboard-grid as siblings. */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 740px;
+      margin: 48px auto 0;
+    }
+    @media (min-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+    }
+    .dashboard-cell {
+      min-height: 180px;
+      /* Transparent — content (splitlog widget / placeholder) provides
+         its own card background. */
+    }
+    #splitlog-root { display: block; height: 100%; }
+
+    /* Placeholder cell — "Add a standalone" teaching slot */
+    .cell-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+      padding: 28px 22px;
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s var(--ease);
+    }
+    .cell-placeholder:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .cell-placeholder:active { transform: scale(0.99); }
+    .cell-placeholder .plus {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 300; line-height: 1;
+      margin-bottom: 4px;
+    }
+    .cell-placeholder .lbl {
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.62);
+      letter-spacing: -0.01em;
+    }
+    .cell-placeholder .sub {
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.30);
+      line-height: 1.55;
+    }
 
     /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 480px) {
@@ -416,7 +482,9 @@
       .tile { padding: 22px; min-height: 148px; border-radius: 22px; }
       .tile-icon { font-size: 26px; margin-bottom: 14px; }
       .sheet { padding: 24px; border-radius: 24px; }
-      #splitlog-root { margin-top: 36px; }
+      .dashboard-grid { margin-top: 36px; gap: 14px; max-width: 100%; }
+      .dashboard-cell { min-height: 160px; }
+      .cell-placeholder { padding: 24px 18px; border-radius: 14px; }
       body {
         background-image:
           radial-gradient(ellipse 90% 35% at 50% -8%, rgba(62, 207, 142, 0.20) 0%, rgba(62, 207, 142, 0.06) 40%, transparent 70%);
@@ -488,7 +556,16 @@
       </div>
     </section>
 
-    <section id="splitlog-root"></section>
+    <div class="dashboard-grid" id="dashboardGrid">
+      <div class="dashboard-cell">
+        <section id="splitlog-root"></section>
+      </div>
+      <a class="dashboard-cell cell-placeholder" href="./SETUP.md" target="_blank" rel="noopener">
+        <span class="plus" aria-hidden="true">+</span>
+        <span class="lbl">Add a standalone</span>
+        <span class="sub">Two lines of HTML · <span style="text-decoration: underline; text-decoration-color: rgba(255,255,255,0.18);">learn how</span></span>
+      </a>
+    </div>
 
     <div class="tiles-region" id="tilesRegion"></div>
 
@@ -709,7 +786,7 @@
         if (splitlogMounted) return;
         splitlogMounted = true;
         const userId = window.OhWisey.userId;
-        const opts = { mode: 'embed', userId };
+        const opts = { mode: 'embed', view: 'today', userId };
         if (userId && window.OhWisey.supabase) opts.supabaseClient = window.OhWisey.supabase;
         try {
           window.SplitLog.mount(root, opts);
