@@ -359,13 +359,13 @@
       </div>
     </section>
 
-    <section class="hero">
+    <section class="hero" id="hero">
       <div class="eyebrow">YOUR STACK</div>
       <div class="hero-num"><span id="count">0</span><span class="unit">apps you built</span></div>
       <div class="hero-sub" id="heroSub">Replace the apps you pay for with single-file tools you own. Build them, ship them, link them here.</div>
     </section>
 
-    <div class="home-divider"><span>STANDALONES</span></div>
+    <div class="home-divider" id="standalonesDivider"><span>STANDALONES</span></div>
 
     <div id="appsRegion"></div>
 
@@ -622,23 +622,39 @@ OhWisey/<br>
         }
       }
 
-      // Personal mode: hide the tutorial section once signed in.
+      // Personal mode: hide everything decorative when signed in — just tiles on black.
+      const hero = document.getElementById('hero');
+      const standalonesDivider = document.getElementById('standalonesDivider');
       const guide = document.getElementById('guide');
       const guideDivider = document.getElementById('guideDivider');
+      if (hero) hero.style.display = isSignedIn ? 'none' : '';
+      if (standalonesDivider) standalonesDivider.style.display = isSignedIn ? 'none' : '';
       if (guide) guide.style.display = isSignedIn ? 'none' : '';
       if (guideDivider) guideDivider.style.display = isSignedIn ? 'none' : '';
 
       const region = document.getElementById('appsRegion');
       if (state.apps.length === 0) {
-        region.innerHTML = `
-          <div class="empty">
-            <div class="empty-icon">◐</div>
-            <div class="empty-title">No standalones yet</div>
-            <div class="empty-sub">Build your first single-file app, drop its folder next to this dashboard, then add a tile pointing at it.</div>
-            <button class="btn-primary" id="emptyAddBtn">+ Add your first standalone</button>
-          </div>
-        `;
-        document.getElementById('emptyAddBtn').addEventListener('click', openAddForm);
+        if (isSignedIn) {
+          region.innerHTML = `
+            <div class="grid">
+              <a class="tile add" id="addTile" href="#">
+                <span class="plus">+</span>
+                <span class="lbl">ADD STANDALONE</span>
+              </a>
+            </div>
+          `;
+          document.getElementById('addTile').addEventListener('click', (e) => { e.preventDefault(); openAddForm(); });
+        } else {
+          region.innerHTML = `
+            <div class="empty">
+              <div class="empty-icon">◐</div>
+              <div class="empty-title">No standalones yet</div>
+              <div class="empty-sub">Build your first single-file app, drop its folder next to this dashboard, then add a tile pointing at it.</div>
+              <button class="btn-primary" id="emptyAddBtn">+ Add your first standalone</button>
+            </div>
+          `;
+          document.getElementById('emptyAddBtn').addEventListener('click', openAddForm);
+        }
       } else {
         const tiles = state.apps.map((a, i) => `
           <a class="tile" href="${escapeHtml(a.path)}">
