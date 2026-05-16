@@ -3,355 +3,467 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Oh Wisey — Your Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>Oh Wisey</title>
   <style>
     :root {
-      --bg:           #000;
-      --surface:      rgba(255, 255, 255, 0.025);
+      --bg: #000;
+
+      --surface-1:    rgba(20, 20, 22, 0.6);
       --surface-2:    rgba(255, 255, 255, 0.04);
-      --surface-3:    rgba(255, 255, 255, 0.06);
-      --border:       rgba(255, 255, 255, 0.08);
+      --surface-3:    rgba(255, 255, 255, 0.08);
       --border-soft:  rgba(255, 255, 255, 0.06);
-      --divider:      rgba(255, 255, 255, 0.07);
+      --border:       rgba(255, 255, 255, 0.10);
+      --border-hover: rgba(255, 255, 255, 0.16);
 
-      --text:    rgba(255, 255, 255, 0.95);
-      --text-2:  rgba(255, 255, 255, 0.60);
-      --text-3:  rgba(255, 255, 255, 0.40);
-      --text-4:  rgba(255, 255, 255, 0.25);
+      --text:   rgba(255, 255, 255, 0.95);
+      --text-2: rgba(255, 255, 255, 0.60);
+      --text-3: rgba(255, 255, 255, 0.40);
+      --text-4: rgba(255, 255, 255, 0.25);
 
-      --mint:       #6ee7b7;
-      --mint-soft:  rgba(110, 231, 183, 0.10);
-      --mint-glow:  rgba(110, 231, 183, 0.45);
-      --amber:      #fbbf24;
-      --red:        #f87171;
+      --mint:      #6ee7b7;
+      --mint-glow: rgba(110, 231, 183, 0.45);
+      --amber:     #fbbf24;
+      --red:       #f87171;
 
-      --radius:     20px;
-      --radius-md:  14px;
-      --radius-sm:  10px;
-      --ease:       cubic-bezier(0.22, 0.61, 0.36, 1);
+      --radius-tile:  24px;
+      --radius-sheet: 28px;
+      --radius-sm:    12px;
+
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     html, body {
-      background: #000; color: var(--text);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: "kern", "liga", "ss01";
+      letter-spacing: -0.011em;
       min-height: 100vh;
     }
-    body { display: flex; justify-content: center; padding: 40px 20px 80px; }
-    .wrap { width: 100%; max-width: 560px; }
 
-    /* ── Header ───────────────────────────── */
-    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
-    .brand-wrap { display: flex; align-items: center; gap: 10px; }
+    body {
+      background-image:
+        radial-gradient(at 20% 0%,   rgba(110, 231, 183, 0.05), transparent 50%),
+        radial-gradient(at 85% 100%, rgba(147, 197, 253, 0.03), transparent 55%);
+      background-attachment: fixed;
+    }
+
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 36px 24px 80px;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
     .brand {
-      font-size: 11px; font-weight: 600; letter-spacing: 0.32em;
-      text-transform: uppercase; color: var(--mint);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--mint);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
     }
     .sync-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--text-4);
-      transition: all 0.2s var(--ease);
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      transition: all 0.3s var(--ease);
     }
-    .sync-dot.configured { background: var(--mint-soft); box-shadow: 0 0 6px rgba(110,231,183,0.4); animation: pulse 2s infinite; }
-    .sync-dot.syncing    { background: var(--amber); }
-    .sync-dot.synced     { background: var(--mint); box-shadow: 0 0 8px var(--mint-glow); }
-    .sync-dot.error      { background: var(--red); }
-    @keyframes pulse { 0%,100% { opacity: 0.6 } 50% { opacity: 1 } }
+    .sync-dot.configured {
+      background: rgba(110, 231, 183, 0.45);
+      animation: pulse 2.2s infinite;
+    }
+    .sync-dot.syncing { background: var(--amber); }
+    .sync-dot.synced  { background: var(--mint); box-shadow: 0 0 10px var(--mint-glow); }
+    .sync-dot.error   { background: var(--red); }
+    @keyframes pulse { 0%, 100% { opacity: 0.55 } 50% { opacity: 1 } }
 
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .date { font-size: 12px; color: var(--text-3); letter-spacing: 0.04em; }
-    .btn-icon {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--text-2);
-      display: inline-flex; align-items: center; justify-content: center;
-      cursor: pointer; font-family: inherit; padding: 0; font-size: 14px;
-      transition: transform 0.1s var(--ease);
-    }
-    .btn-icon:hover { color: var(--text); }
-    .btn-icon:active { transform: scale(0.94); }
-
-    /* ── Hero ─────────────────────────────── */
-    .hero {
-      background: #0a0a0f;
-      border: 1px solid rgba(110,231,183,0.10);
-      border-radius: var(--radius);
-      padding: 24px 22px;
-      margin-bottom: 8px;
-    }
-    .eyebrow {
-      font-size: 11px; font-weight: 500; letter-spacing: 0.16em;
-      text-transform: uppercase; color: var(--text-3);
-      margin-bottom: 10px;
-    }
-    .hero-num {
-      font-size: 64px; font-weight: 600; letter-spacing: -0.04em;
-      font-variant-numeric: tabular-nums; color: var(--mint); line-height: 1;
-    }
-    .hero-num .unit {
-      font-size: 16px; font-weight: 400; color: var(--text-2);
-      margin-left: 8px; letter-spacing: 0;
-    }
-    .hero-sub { margin-top: 10px; font-size: 13px; color: var(--text-2); line-height: 1.5; }
-
-    /* ── Section divider ──────────────────── */
-    .home-divider { display: flex; align-items: center; gap: 14px; margin: 32px 0 18px; }
-    .home-divider::before,
-    .home-divider::after { content: ''; flex: 1; height: 1px; background: var(--divider); }
-    .home-divider span {
-      font-size: 12px; font-weight: 600; letter-spacing: 0.25em;
-      text-transform: uppercase; color: #fff; white-space: nowrap;
-    }
-
-    /* ── Tile grid ────────────────────────── */
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .tile {
-      background: var(--surface);
+    .gear {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       border: 1px solid var(--border-soft);
-      border-radius: var(--radius-md);
-      padding: 16px;
+      color: var(--text-2);
+      font-size: 15px;
       cursor: pointer;
-      position: relative;
-      transition: all 0.15s var(--ease);
-      text-decoration: none; color: inherit; display: block;
-      min-height: 124px;
-    }
-    .tile:hover { background: var(--surface-2); border-color: var(--border); transform: translateY(-1px); }
-    .tile:active { transform: scale(0.99); }
-    .tile-icon { font-size: 26px; line-height: 1; margin-bottom: 12px; }
-    .tile-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; letter-spacing: -0.01em; }
-    .tile-desc {
-      font-size: 11px; color: var(--text-3); line-height: 1.4;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .tile-remove {
-      position: absolute; top: 8px; right: 8px;
-      width: 22px; height: 22px; border-radius: 50%;
-      background: rgba(0,0,0,0.4); color: var(--text-3);
-      border: 1px solid var(--border);
-      display: none; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 12px; line-height: 1; padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s var(--ease);
       font-family: inherit;
     }
-    .tile:hover .tile-remove { display: inline-flex; }
-    .tile-remove:hover { color: var(--red); border-color: rgba(248,113,113,0.4); }
-    .tile.add {
-      background: transparent;
-      border: 1px dashed rgba(110,231,183,0.30);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: var(--mint); text-align: center;
+    .gear:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-hover);
     }
-    .tile.add:hover { background: var(--mint-soft); border-color: var(--mint); }
-    .tile.add .plus { font-size: 28px; font-weight: 300; margin-bottom: 6px; line-height: 1; }
-    .tile.add .lbl { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; }
+    .gear:active { transform: scale(0.94); }
 
-    /* ── Empty state ──────────────────────── */
-    .empty {
-      background: var(--surface); border: 1px dashed var(--border);
-      border-radius: var(--radius); padding: 36px 24px; text-align: center;
+    .greeting {
+      font-size: 30px;
+      font-weight: 500;
+      letter-spacing: -0.022em;
+      line-height: 1.18;
+      color: var(--text);
+      margin-bottom: 6px;
     }
-    .empty-icon { font-size: 32px; margin-bottom: 14px; }
-    .empty-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-    .empty-sub { font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 20px; max-width: 360px; margin: 0 auto 20px; }
+    .date-line {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-3);
+      letter-spacing: 0;
+    }
 
-    /* ── Buttons ──────────────────────────── */
-    .btn-primary {
-      background: var(--mint); color: #000; font-weight: 600;
-      border: none; border-radius: var(--radius-sm); padding: 12px 20px;
-      font-family: inherit; cursor: pointer; font-size: 13px;
-      transition: transform 0.1s var(--ease);
-    }
-    .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-ghost {
-      background: transparent; color: var(--mint);
-      border: 1px solid rgba(110,231,183,0.25); border-radius: var(--radius-sm);
-      padding: 10px 16px; font-family: inherit; font-weight: 500; cursor: pointer; font-size: 13px;
-    }
-    .btn-ghost:hover { background: var(--mint-soft); }
-    .btn-neutral {
-      background: var(--surface-3); color: var(--text); border: none;
-      border-radius: var(--radius-sm); padding: 10px 14px;
-      font-family: inherit; cursor: pointer; font-size: 13px;
-    }
-    .btn-neutral:hover { background: var(--border); }
+    /* ── Tile grid ──────────────────────────────────────────── */
+    .tiles-region { margin-top: 40px; }
 
-    /* ── Sheets / forms ───────────────────── */
-    .sheet {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 22px;
-      margin-top: 14px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
     }
-    .sheet h3 {
-      font-size: 14px; font-weight: 600; letter-spacing: -0.01em;
+
+    .tile {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: var(--surface-1);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-tile);
+      padding: 24px;
+      min-height: 160px;
+      overflow: hidden;
+      isolation: isolate;
+      transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+    .tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 45%, rgba(0,0,0,0.18) 100%);
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .tile::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.65;
+    }
+    .tile[data-category="fitness"]::after   { background: radial-gradient(at 0% 0%, rgba(110, 231, 183, 0.07), transparent 60%); }
+    .tile[data-category="rest"]::after      { background: radial-gradient(at 0% 0%, rgba(147, 197, 253, 0.06), transparent 60%); }
+    .tile[data-category="mind"]::after      { background: radial-gradient(at 0% 0%, rgba(167, 139, 250, 0.05), transparent 60%); }
+    .tile[data-category="nutrition"]::after { background: radial-gradient(at 0% 0%, rgba(251, 191, 36, 0.05), transparent 60%); }
+    .tile[data-category="finance"]::after   { background: radial-gradient(at 0% 0%, rgba(110, 231, 183, 0.04), transparent 60%); }
+
+    .tile:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 12px 32px rgba(0, 0, 0, 0.32);
+    }
+    .tile.pressing {
+      transform: scale(0.97);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+    }
+
+    .tile-icon {
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 16px;
+      filter: saturate(1.1);
+    }
+    .tile-name {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.018em;
+      color: var(--text);
       margin-bottom: 4px;
     }
-    .sheet .sub { font-size: 12px; color: var(--text-3); margin-bottom: 18px; line-height: 1.5; }
+    .tile-desc {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-3);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .tile-widget { margin-top: auto; }
+    .widget-meta {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 4px;
+    }
+    .widget-sub {
+      font-size: 12.5px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .widget-empty {
+      font-size: 12.5px;
+      color: var(--text-4);
+      line-height: 1.5;
+    }
+    .widget-stat-num {
+      font-size: 44px;
+      font-weight: 600;
+      letter-spacing: -0.032em;
+      color: var(--text);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .widget-stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-top: 6px;
+    }
+    .widget-progress-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 8px var(--mint-glow);
+      margin-right: 7px;
+      vertical-align: middle;
+    }
+
+    /* ── Sheets ─────────────────────────────────────────────── */
+    .sheet {
+      background: rgba(20, 20, 22, 0.78);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sheet);
+      padding: 28px;
+      margin-top: 16px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 16px 48px rgba(0, 0, 0, 0.4);
+    }
+    .sheet h3 {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.018em;
+      margin-bottom: 8px;
+    }
+    .sheet .sub {
+      font-size: 13.5px;
+      color: var(--text-3);
+      line-height: 1.55;
+      margin-bottom: 22px;
+    }
     .sheet .sub a { color: var(--mint); text-decoration: none; }
     .sheet .sub a:hover { text-decoration: underline; }
-    .field { margin-bottom: 14px; }
+
+    .field { margin-bottom: 16px; }
     .field label {
-      display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
-      text-transform: uppercase; color: var(--text-3); margin-bottom: 6px;
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 8px;
     }
     .field input {
-      width: 100%; padding: 11px 13px;
-      background: var(--surface-2); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); color: var(--text);
-      font-family: inherit; font-size: 14px;
+      width: 100%;
+      padding: 13px 15px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 0.2s var(--ease);
     }
-    .field input:focus { outline: none; border-color: var(--mint); background: var(--surface-3); }
-    .field .hint { font-size: 11px; color: var(--text-4); margin-top: 6px; line-height: 1.4; }
-    .row-2 { display: grid; grid-template-columns: 88px 1fr; gap: 10px; }
-    .actions { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+    .field input:focus {
+      outline: none;
+      border-color: var(--mint);
+      background: rgba(110, 231, 183, 0.04);
+    }
 
-    .settings-block { margin-bottom: 22px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .btn-primary {
+      background: var(--mint);
+      color: #000;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 13px 22px;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      letter-spacing: -0.008em;
+      transition: all 0.3s var(--ease);
+    }
+    .btn-primary:hover { box-shadow: 0 0 24px var(--mint-glow); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+    .btn-neutral {
+      background: var(--surface-3);
+      color: var(--text);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 13px 18px;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s var(--ease);
+    }
+    .btn-neutral:hover { background: rgba(255, 255, 255, 0.12); }
+    .btn-neutral:active { transform: scale(0.97); }
+
+    .settings-block { margin-bottom: 26px; }
     .settings-block:last-child { margin-bottom: 0; }
     .settings-label {
-      font-size: 10px; font-weight: 600; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--text-4); margin-bottom: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-4);
+      margin-bottom: 14px;
     }
     .status-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 12px 14px; background: var(--surface-2);
-      border-radius: var(--radius-sm); margin-bottom: 14px;
-      font-size: 12px; color: var(--text-2);
-    }
-    .status-row strong { color: var(--text); }
-
-    /* ── Guide ────────────────────────────── */
-    .guide {
-      background: var(--surface); border: 1px solid var(--border-soft);
-      border-radius: var(--radius); overflow: hidden;
-    }
-    .guide summary {
-      list-style: none; cursor: pointer;
-      padding: 18px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 14px; font-weight: 600; letter-spacing: -0.01em;
-    }
-    .guide summary::-webkit-details-marker { display: none; }
-    .guide summary .chev { color: var(--text-3); transition: transform 0.2s var(--ease); font-size: 18px; line-height: 1; }
-    .guide[open] summary .chev { transform: rotate(90deg); }
-    .guide-body { padding: 0 20px 22px; border-top: 1px solid var(--divider); padding-top: 18px; }
-    .guide-body p { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 12px; }
-    .guide-body ol { margin-left: 18px; }
-    .guide-body ol li { font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 8px; }
-    .guide-body ol li strong { color: var(--text); font-weight: 600; }
-    .guide-body code {
-      background: var(--surface-3); color: var(--mint);
-      padding: 2px 7px; border-radius: 5px;
-      font-family: 'SF Mono', Menlo, monospace; font-size: 12px;
-    }
-    .guide-body .codeblock {
-      background: #050505; border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 12px 14px;
-      font-family: 'SF Mono', Menlo, monospace; font-size: 11px;
-      color: var(--text-2); line-height: 1.6;
-      overflow-x: auto; margin: 8px 0 14px;
-    }
-    .guide-body .codeblock .c-mint { color: var(--mint); }
-    .guide-body .callout {
-      background: var(--mint-soft);
-      border: 1px solid rgba(110,231,183,0.18);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--surface-2);
       border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      font-size: 12px; color: var(--text); line-height: 1.5;
-      margin: 10px 0 4px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: var(--text-2);
     }
-    .guide-body .callout strong { color: var(--mint); }
-    .guide-body h4 {
-      font-size: 12px; font-weight: 600; color: var(--text);
-      margin: 20px 0 10px; letter-spacing: 0.04em;
-    }
+    .row-2 { display: grid; grid-template-columns: 110px 1fr; gap: 12px; }
 
-    /* ── Footer ───────────────────────────── */
-    .footer {
-      margin-top: 40px; padding-top: 24px;
-      border-top: 1px solid var(--divider);
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 11px; color: var(--text-4); letter-spacing: 0.04em;
-    }
-    .footer a { color: var(--text-3); text-decoration: none; cursor: pointer; }
-    .footer a:hover { color: var(--mint); }
-
+    /* ── Toast ──────────────────────────────────────────────── */
     .toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: var(--surface-3); border: 1px solid var(--border);
-      color: var(--text); padding: 10px 16px; border-radius: var(--radius-sm);
-      font-size: 12px; backdrop-filter: blur(8px);
-      opacity: 0; transition: opacity 0.2s var(--ease); pointer-events: none;
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 20, 22, 0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--border-soft);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 13px;
+      opacity: 0;
+      transition: opacity 0.3s var(--ease);
+      pointer-events: none;
       z-index: 50;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
     }
     .toast.show { opacity: 1; }
-    .toast.error { color: var(--red); border-color: rgba(248,113,113,0.3); }
+    .toast.error { color: var(--red); border-color: rgba(248, 113, 113, 0.3); }
 
     .hidden { display: none !important; }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .wrap { padding: 28px 16px 60px; }
+      .brand-row { margin-bottom: 26px; }
+      .greeting { font-size: 26px; }
+      .grid { gap: 14px; }
+      .tile { padding: 22px; min-height: 148px; border-radius: 22px; }
+      .tile-icon { font-size: 26px; margin-bottom: 14px; }
+      .sheet { padding: 24px; border-radius: 24px; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
 
-    <header class="header">
-      <div class="brand-wrap">
-        <div class="brand">OH&nbsp;·&nbsp;WISEY</div>
-        <div class="sync-dot" id="syncDot" title="Local only"></div>
-      </div>
-      <div class="header-right">
-        <div class="date" id="date"></div>
-        <button class="btn-icon" id="settingsBtn" title="Settings">⚙</button>
-      </div>
-    </header>
+    <div class="brand-row">
+      <span class="brand">
+        OH&nbsp;·&nbsp;WISEY
+        <span class="sync-dot" id="syncDot" title="Not connected"></span>
+      </span>
+      <button class="gear" id="settingsBtn" aria-label="Settings">⚙</button>
+    </div>
 
-    <section id="settingsSheet" class="sheet hidden">
+    <h1 class="greeting" id="greeting">Welcome</h1>
+    <p class="date-line" id="dateLine"></p>
+
+    <section id="settingsSheet" class="sheet hidden" style="margin-top:24px">
       <h3>Settings</h3>
-      <p class="sub">Cloud sync is optional. The dashboard works fully offline with localStorage — sign in to sync your tiles across devices.</p>
+      <p class="sub">Sign in to sync your standalone data across devices. The dashboard works without it — tiles always render.</p>
 
-      <div class="status-row" id="statusRow">
+      <div class="status-row">
         <span class="sync-dot" id="statusDot"></span>
-        <span id="statusText">Local only</span>
+        <span id="statusText">Not connected</span>
       </div>
 
       <div class="settings-block" id="cloudConfigBlock">
         <div class="settings-label">CONNECT SUPABASE</div>
-        <p class="sub">Paste your Supabase project URL and anon key. New here? <a href="./SETUP.md" target="_blank">Setup guide →</a></p>
+        <p class="sub">New here? <a href="./SETUP.md" target="_blank">Setup guide →</a></p>
         <div class="field">
           <label>Supabase URL</label>
           <input id="cfg-url" placeholder="https://xxxx.supabase.co" autocomplete="off" />
         </div>
         <div class="field">
           <label>Anon Key</label>
-          <input id="cfg-key" placeholder="eyJhbGci…" autocomplete="off" />
+          <input id="cfg-key" placeholder="sb_publishable_… or eyJ…" autocomplete="off" />
         </div>
         <div class="actions">
-          <button class="btn-primary" id="saveCfgBtn">Save credentials</button>
+          <button class="btn-primary" id="saveCfgBtn">Save</button>
           <button class="btn-neutral" id="closeSettingsBtn1">Close</button>
         </div>
       </div>
 
       <div class="settings-block hidden" id="signInBlock">
         <div class="settings-label">SIGN IN</div>
-        <p class="sub">We'll email you a magic link. No password to remember.</p>
+        <p class="sub">Magic link, no password.</p>
         <div class="field">
           <label>Email</label>
           <input id="signinEmail" type="email" placeholder="you@example.com" autocomplete="email" />
         </div>
         <div class="actions">
           <button class="btn-primary" id="sendMagicBtn">Send magic link</button>
-          <button class="btn-neutral" id="clearCfgBtn">Disconnect Supabase</button>
+          <button class="btn-neutral" id="clearCfgBtn">Disconnect</button>
         </div>
-        <div id="magicMsg" class="hint" style="margin-top:10px"></div>
+        <div id="magicMsg" style="margin-top:14px;font-size:12.5px;color:var(--text-3);line-height:1.5"></div>
       </div>
 
       <div class="settings-block hidden" id="signedInBlock">
         <div class="settings-label">SIGNED IN</div>
-        <p class="sub">Signed in as <strong id="userEmail" style="color:var(--text)"></strong>. Standalones inherit this session for cross-device data sync.</p>
+        <p class="sub">Signed in as <strong id="userEmail" style="color:var(--text);font-weight:500"></strong>. Standalones inherit this session via <span style="color:var(--text-2)">window.opener?.ohwisey?.session</span>.</p>
         <div class="actions">
           <button class="btn-neutral" id="signOutBtn">Sign out</button>
           <button class="btn-neutral" id="closeSettingsBtn2">Close</button>
@@ -359,62 +471,7 @@
       </div>
     </section>
 
-    <section class="hero" id="hero">
-      <div class="eyebrow">YOUR STACK</div>
-      <div class="hero-num"><span id="count">0</span><span class="unit">apps you built</span></div>
-      <div class="hero-sub" id="heroSub">Replace the apps you pay for with single-file tools you own. Build them, ship them, link them here.</div>
-    </section>
-
-    <div class="home-divider" id="standalonesDivider"><span>STANDALONES</span></div>
-
-    <div id="appsRegion"></div>
-
-    <div class="home-divider" id="guideDivider"><span>HOW IT WORKS</span></div>
-
-    <details class="guide" id="guide">
-      <summary>
-        <span>Build your own dashboard in 5 minutes</span>
-        <span class="chev">›</span>
-      </summary>
-      <div class="guide-body">
-        <p>You don't need ten apps. You need one folder. This dashboard is the hub — each standalone is a single HTML file in its own folder right next to it.</p>
-
-        <ol>
-          <li><strong>Fork the repo.</strong> Drop <code>index.html</code> into any folder, or fork <a href="https://github.com/ohwisey/OhWisey" target="_blank" style="color:var(--mint)">the GitHub repo</a> to start from this exact template.</li>
-          <li><strong>Build a standalone.</strong> One HTML file, inline CSS, inline JS, <code>localStorage</code> (or Supabase) for state. No bundler. No npm. Host it anywhere — sibling folder, GitHub Pages, Vercel, your own domain.</li>
-          <li><strong>Add it to the dashboard.</strong> Open <code>index.html</code>, find the <code>TILES</code> array at the top of the script, add a new entry with <code>name</code>, <code>icon</code>, <code>url</code>, <code>desc</code>.</li>
-          <li><strong>Push to git.</strong> <code>git add . && git commit -m "add my standalone" && git push</code>. Vercel redeploys in ~20s.</li>
-          <li><strong>Open it.</strong> Click the tile. Your standalone runs on its own — data either local or synced via Supabase.</li>
-        </ol>
-
-        <h4>WHY THIS WAY</h4>
-        <p>Most dashboards let you "add tiles" through a UI that writes to a database. That database becomes the lock-in. Here, the tile list lives in code — version controlled, forkable, readable. Adding a tile <em>is</em> the act of pushing to git. Newbies learn the workflow by doing it once.</p>
-
-        <h4>TILE SHAPE</h4>
-        <div class="codeblock">
-<span class="c-mint">// In index.html, near the top of &lt;script&gt;</span><br>
-const TILES = [<br>
-&nbsp;&nbsp;{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;name: <span class="c-mint">'Workout Logger'</span>,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;icon: <span class="c-mint">'🏋️'</span>,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;url:&nbsp;&nbsp;<span class="c-mint">'./workout-logger/'</span>,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;desc: <span class="c-mint">'Log sets, reps, and PRs'</span>,<br>
-&nbsp;&nbsp;},<br>
-];
-        </div>
-
-        <h4>OPTIONAL: SUPABASE FOR YOUR STANDALONES</h4>
-        <p>The dashboard signs you into Supabase. Your standalones inherit that session via <code>window.opener?.ohwisey?.session</code> — meaning workout logs, sleep data, etc. sync across devices without each standalone needing its own auth flow.</p>
-        <div class="callout">
-          <strong>Setup:</strong> see <a href="./SETUP.md" target="_blank" style="color:var(--mint)">SETUP.md</a> — 10-minute walkthrough to deploy to Vercel + connect Supabase. Auth-only; tile list lives in code.
-        </div>
-      </div>
-    </details>
-
-    <footer class="footer">
-      <span id="footerStatus">v1 · not connected</span>
-      <a href="https://github.com/ohwisey/OhWisey" target="_blank">View source</a>
-    </footer>
+    <div class="tiles-region" id="tilesRegion"></div>
 
   </div>
 
@@ -426,37 +483,82 @@ const TILES = [<br>
     // ─────────────────────────────────────────────────────────────
     // EDIT HERE TO ADD A TILE
     //
-    //   1. Build your standalone (single HTML file in its own folder, or
-    //      a separate repo deployed to GitHub Pages / Vercel).
-    //   2. Add a new object to TILES below.
+    //   1. Build your standalone (single HTML file or a separate repo
+    //      deployed to GitHub Pages / Vercel).
+    //   2. Add an entry to TILES below.
     //   3. git add . && git commit -m "feat: add <name>" && git push
     //   4. Vercel redeploys in ~20s. Tile appears.
     //
-    //   Fields: { name, icon, url, desc }
-    //   url can be a relative path (./my-app/index.html) or external URL.
+    //   Fields:
+    //     slug      — matches the app_slug your standalone writes to
+    //                 in the app_data table (used to look up its widget)
+    //     name      — display name
+    //     icon      — emoji or single glyph
+    //     url       — relative path or external URL
+    //     desc      — one-line subtitle
+    //     category  — fitness | rest | mind | nutrition | finance (tints the tile)
     // ─────────────────────────────────────────────────────────────
     const TILES = [
       {
-        name: 'SplitLog',
-        icon: '🏋️',
-        url:  'https://ohwisey.github.io/splitlog/',
-        desc: 'Workout split logger',
+        slug:     'splitlog',
+        name:     'SplitLog',
+        icon:     '🏋️',
+        url:      'https://ohwisey.github.io/splitlog/',
+        desc:     'Workout split logger',
+        category: 'fitness',
       },
     ];
 
-    // ── Keys / state ─────────────────────────
+    // ─────────────────────────────────────────────────────────────
+    // WIDGET RENDERERS
+    //
+    // Each function receives the user's data for that app_slug, shaped:
+    //   { '2026-05-16': <value>, '2026-05-17': <value>, ... }
+    //
+    // Return inline HTML to render inside the tile, or null to fall back
+    // to the default "no data yet" preview. Keep output compact — tiles
+    // are ~150-180px tall.
+    // ─────────────────────────────────────────────────────────────
+    const WIDGETS = {
+      splitlog: (data) => {
+        if (!data || Object.keys(data).length === 0) return null;
+        const d = new Date();
+        const todayKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const today = data[todayKey] || data.today || data.current;
+        if (!today) return null;
+        const day       = today.day ?? today.dayNumber ?? 1;
+        const dayName   = today.name || today.dayName || today.label || 'Session';
+        const exercises = today.exercises ?? (Array.isArray(today.lifts) ? today.lifts.length : 0);
+        const logged    = today.logged ?? (Array.isArray(today.lifts) ? today.lifts.filter(l => l.done).length : 0);
+        const inProgress = logged > 0 && (exercises === 0 || logged < exercises);
+        const dot = inProgress ? '<span class="widget-progress-dot"></span>' : '';
+        return `
+          <div class="widget-meta">DAY ${String(day).padStart(2, '0')} · ${escapeHtml(dayName)}</div>
+          <div class="widget-sub">${dot}${exercises} exercise${exercises === 1 ? '' : 's'} · ${logged} logged today</div>
+        `;
+      },
+    };
+
+    // ─────────────────────────────────────────────────────────────
+    // State
+    // ─────────────────────────────────────────────────────────────
     const CONFIG_KEY = 'ohwisey.supabase.config';
     let supabase = null;
-    let session = null;
+    let session  = null;
+    let widgetCache = {};
+    let dateTickTimer = null;
 
-    const loadConfig = () => {
-      try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || 'null'); }
-      catch (e) { return null; }
-    };
-    const saveConfig = (cfg) => localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
+    const loadConfig  = () => { try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || 'null'); } catch (e) { return null; } };
+    const saveConfig  = (cfg) => localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
     const clearConfig = () => localStorage.removeItem(CONFIG_KEY);
 
-    // ── Cloud sync ───────────────────────────
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Cloud
+    // ─────────────────────────────────────────────────────────────
     async function initCloud() {
       const cfg = loadConfig();
       if (!cfg?.url || !cfg?.anonKey) {
@@ -468,10 +570,10 @@ const TILES = [<br>
         supabase = createClient(cfg.url, cfg.anonKey, {
           auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
         });
-        supabase.auth.onAuthStateChange((_event, sess) => {
+        supabase.auth.onAuthStateChange((_e, sess) => {
           session = sess;
           if (sess) onSignedIn();
-          else { setSyncStatus('configured'); render(); }
+          else { setSyncStatus('configured'); widgetCache = {}; render(); }
           renderSettings();
         });
         const { data: { session: existing } } = await supabase.auth.getSession();
@@ -481,144 +583,172 @@ const TILES = [<br>
       } catch (e) {
         console.error('cloud init', e);
         setSyncStatus('error');
-        toast('Could not connect to Supabase. Check your URL and key.', true);
+        toast('Connection error. Check URL and key.', true);
       }
       renderSettings();
     }
 
-    function onSignedIn() {
+    async function onSignedIn() {
+      setSyncStatus('syncing');
+      await fetchWidgetData();
       setSyncStatus('synced');
       render();
     }
 
-    // ── UI status ────────────────────────────
+    async function fetchWidgetData() {
+      if (!supabase || !session) { widgetCache = {}; return; }
+      try {
+        const { data, error } = await supabase
+          .from('app_data')
+          .select('app_slug, key, value')
+          .eq('user_id', session.user.id);
+        if (error) throw error;
+        const byApp = {};
+        for (const row of data || []) {
+          byApp[row.app_slug] = byApp[row.app_slug] || {};
+          byApp[row.app_slug][row.key] = row.value;
+        }
+        widgetCache = byApp;
+      } catch (e) {
+        console.error('widget fetch', e);
+        widgetCache = {};
+      }
+    }
+
     function setSyncStatus(s) {
       const labels = {
         offline:    'Not connected',
         configured: 'Not signed in',
+        syncing:    'Syncing…',
         synced:     `Signed in${session?.user?.email ? ' · ' + session.user.email : ''}`,
-        error:      'Connection error'
+        error:      'Connection error',
       };
-      const stateClass = s === 'offline' ? '' : s;
-      document.getElementById('syncDot').className = 'sync-dot ' + stateClass;
-      document.getElementById('syncDot').title = labels[s] || '';
-      const statusDot = document.getElementById('statusDot');
-      if (statusDot) statusDot.className = 'sync-dot ' + stateClass;
-      const statusText = document.getElementById('statusText');
-      if (statusText) statusText.textContent = labels[s] || '';
-      const footer = document.getElementById('footerStatus');
-      if (footer) footer.textContent = s === 'synced' ? 'v1 · signed in' : (s === 'offline' ? 'v1 · not connected' : `v1 · ${labels[s].toLowerCase()}`);
+      const cls = s === 'offline' ? '' : s;
+      const dot = document.getElementById('syncDot');
+      if (dot) { dot.className = 'sync-dot ' + cls; dot.title = labels[s] || ''; }
+      const sDot = document.getElementById('statusDot');
+      if (sDot) sDot.className = 'sync-dot ' + cls;
+      const sText = document.getElementById('statusText');
+      if (sText) sText.textContent = labels[s] || '';
     }
 
-    function toast(msg, isError = false) {
+    function toast(msg, isErr = false) {
       const el = document.getElementById('toast');
       el.textContent = msg;
-      el.className = 'toast show' + (isError ? ' error' : '');
-      setTimeout(() => el.className = 'toast' + (isError ? ' error' : ''), 2400);
+      el.className = 'toast show' + (isErr ? ' error' : '');
+      setTimeout(() => el.className = 'toast' + (isErr ? ' error' : ''), 2600);
     }
 
-    // ── Rendering ────────────────────────────
-    function fmtDate() {
-      const d = new Date();
-      return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
+    // ─────────────────────────────────────────────────────────────
+    // Greeting / name / date
+    // ─────────────────────────────────────────────────────────────
+    function firstNameFromEmail(email) {
+      if (!email) return '';
+      const local = String(email).split('@')[0];
+      const tokens = local.split(/[._\-+]/).filter(t => /^[a-z]+$/i.test(t));
+      let name = tokens.length ? tokens[0] : local.replace(/[^a-z]/gi, '');
+      if (!name) return '';
+      if (name.length > 8) name = name.slice(0, 8);
+      return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    }
+    function greetingForHour(h) {
+      if (h >= 5  && h < 12) return 'Good morning';
+      if (h >= 12 && h < 17) return 'Good afternoon';
+      if (h >= 17 && h < 22) return 'Good evening';
+      return 'Good night';
+    }
+    function fmtFullDate() {
+      return new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
     }
 
-    function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    }
-
+    // ─────────────────────────────────────────────────────────────
+    // Render
+    // ─────────────────────────────────────────────────────────────
     function render() {
-      document.getElementById('date').textContent = fmtDate();
-      document.getElementById('count').textContent = TILES.length;
+      const greeting = document.getElementById('greeting');
+      const dateLine = document.getElementById('dateLine');
+      const hour = new Date().getHours();
+      const name = session?.user?.email ? firstNameFromEmail(session.user.email) : '';
+      greeting.textContent = `${greetingForHour(hour)}${name ? ', ' + name : ''}`;
+      dateLine.textContent = fmtFullDate();
 
-      const isSignedIn = !!session;
-      const sub = document.getElementById('heroSub');
-      if (TILES.length === 0) {
-        sub.textContent = 'Replace the apps you pay for with single-file tools you own. Build them, ship them, link them here.';
-      } else if (TILES.length === 1) {
-        sub.textContent = 'One tool, zero subscriptions. The TILES array in index.html is the whole story.';
+      const region = document.getElementById('tilesRegion');
+      region.innerHTML = `<div class="grid">${TILES.map(renderTile).join('')}</div>`;
+
+      // Tactile press feedback
+      region.querySelectorAll('.tile').forEach(el => {
+        const press = () => el.classList.add('pressing');
+        const release = () => el.classList.remove('pressing');
+        el.addEventListener('mousedown', press);
+        el.addEventListener('touchstart', press, { passive: true });
+        ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev => el.addEventListener(ev, release));
+      });
+    }
+
+    function renderTile(t) {
+      const renderer = WIDGETS[t.slug];
+      const data = widgetCache[t.slug];
+      let widget;
+      const html = renderer ? renderer(data) : null;
+      if (html) {
+        widget = `<div class="tile-widget">${html}</div>`;
+      } else if (session) {
+        widget = `<div class="tile-widget"><span class="widget-empty">No data yet — open to start.</span></div>`;
       } else {
-        sub.textContent = `${TILES.length} tools, zero subscriptions. Edit the TILES array in index.html to add more.`;
+        widget = `<div class="tile-widget"><span class="widget-empty">Sign in to see your data.</span></div>`;
       }
-
-      // Personal mode: hide everything decorative when signed in — just tiles on black.
-      const hero = document.getElementById('hero');
-      const standalonesDivider = document.getElementById('standalonesDivider');
-      const guide = document.getElementById('guide');
-      const guideDivider = document.getElementById('guideDivider');
-      if (hero) hero.style.display = isSignedIn ? 'none' : '';
-      if (standalonesDivider) standalonesDivider.style.display = isSignedIn ? 'none' : '';
-      if (guide) guide.style.display = isSignedIn ? 'none' : '';
-      if (guideDivider) guideDivider.style.display = isSignedIn ? 'none' : '';
-
-      const region = document.getElementById('appsRegion');
-      if (TILES.length === 0) {
-        region.innerHTML = isSignedIn ? '' : `
-          <div class="empty">
-            <div class="empty-icon">◐</div>
-            <div class="empty-title">No standalones yet</div>
-            <div class="empty-sub">Tiles live in the <code>TILES</code> array at the top of <code>index.html</code>. Edit, push to git, done.</div>
-          </div>
-        `;
-      } else {
-        const tiles = TILES.map(t => `
-          <a class="tile" href="${escapeHtml(t.url)}">
-            <div class="tile-icon">${escapeHtml(t.icon || '◆')}</div>
-            <div class="tile-name">${escapeHtml(t.name)}</div>
-            <div class="tile-desc">${escapeHtml(t.desc || '')}</div>
-          </a>
-        `).join('');
-        region.innerHTML = `<div class="grid">${tiles}</div>`;
-      }
+      return `
+        <a class="tile" data-category="${escapeHtml(t.category || 'default')}" href="${escapeHtml(t.url)}">
+          <div class="tile-icon">${escapeHtml(t.icon || '◆')}</div>
+          <div class="tile-name">${escapeHtml(t.name)}</div>
+          <div class="tile-desc">${escapeHtml(t.desc || '')}</div>
+          ${widget}
+        </a>
+      `;
     }
 
     function renderSettings() {
       const cfg = loadConfig();
-      const cfgBlock = document.getElementById('cloudConfigBlock');
-      const signInBlock = document.getElementById('signInBlock');
+      const cfgBlock      = document.getElementById('cloudConfigBlock');
+      const signInBlock   = document.getElementById('signInBlock');
       const signedInBlock = document.getElementById('signedInBlock');
-
       const hasCfg = !!(cfg?.url && cfg?.anonKey);
       const hasSession = !!session;
-
       cfgBlock.classList.toggle('hidden', hasCfg);
       signInBlock.classList.toggle('hidden', !hasCfg || hasSession);
       signedInBlock.classList.toggle('hidden', !hasSession);
-
-      if (hasSession) {
-        document.getElementById('userEmail').textContent = session.user.email || '';
-      }
+      if (hasSession) document.getElementById('userEmail').textContent = session.user.email || '';
     }
 
-    // ── Settings handlers ────────────────────
-    function openSettings() { document.getElementById('settingsSheet').classList.remove('hidden'); renderSettings(); }
+    // ─────────────────────────────────────────────────────────────
+    // Settings actions
+    // ─────────────────────────────────────────────────────────────
+    function openSettings()  { document.getElementById('settingsSheet').classList.remove('hidden'); renderSettings(); }
     function closeSettings() { document.getElementById('settingsSheet').classList.add('hidden'); }
 
     async function handleSaveConfig() {
-      const url = document.getElementById('cfg-url').value.trim();
+      const url     = document.getElementById('cfg-url').value.trim();
       const anonKey = document.getElementById('cfg-key').value.trim();
       if (!url || !anonKey) { toast('Both fields required', true); return; }
       saveConfig({ url, anonKey });
-      toast('Credentials saved. Sign in next.');
+      toast('Saved. Sign in next.');
       await initCloud();
     }
-
     async function handleClearConfig() {
-      if (session) await supabase.auth.signOut();
+      if (session && supabase) await supabase.auth.signOut();
       clearConfig();
-      supabase = null;
-      session = null;
+      supabase = null; session = null; widgetCache = {};
       setSyncStatus('offline');
-      renderSettings();
-      toast('Supabase disconnected. Back to local-only.');
+      renderSettings(); render();
+      toast('Disconnected.');
     }
-
     async function handleSendMagic() {
       const email = document.getElementById('signinEmail').value.trim();
       if (!email) { toast('Enter your email', true); return; }
       const msg = document.getElementById('magicMsg');
       const btn = document.getElementById('sendMagicBtn');
-      btn.disabled = true; msg.textContent = 'Sending…';
+      btn.disabled = true;
+      msg.textContent = 'Sending…';
       try {
         const { error } = await supabase.auth.signInWithOtp({
           email,
@@ -632,17 +762,15 @@ const TILES = [<br>
         btn.disabled = false;
       }
     }
-
     async function handleSignOut() {
       if (supabase) await supabase.auth.signOut();
-      session = null;
+      session = null; widgetCache = {};
       setSyncStatus('configured');
-      renderSettings();
-      render();
+      renderSettings(); render();
       toast('Signed out.');
     }
 
-    // ── Wire up ──────────────────────────────
+    // Wire-up
     document.getElementById('settingsBtn').addEventListener('click', openSettings);
     document.getElementById('closeSettingsBtn1').addEventListener('click', closeSettings);
     document.getElementById('closeSettingsBtn2').addEventListener('click', closeSettings);
@@ -651,10 +779,17 @@ const TILES = [<br>
     document.getElementById('sendMagicBtn').addEventListener('click', handleSendMagic);
     document.getElementById('signOutBtn').addEventListener('click', handleSignOut);
 
-    // Expose session for standalones to inherit (e.g. window.opener.ohwisey.session)
-    window.ohwisey = { get session() { return session; }, get supabase() { return supabase; } };
+    // Expose for standalones to inherit the session
+    window.ohwisey = {
+      get session()  { return session; },
+      get supabase() { return supabase; },
+    };
 
-    // ── Boot ─────────────────────────────────
+    // Re-render the greeting + date every 5 minutes so they stay accurate
+    // (handles hour boundaries for morning/afternoon/evening transitions).
+    dateTickTimer = setInterval(() => render(), 5 * 60 * 1000);
+
+    // Boot
     render();
     initCloud();
   </script>
