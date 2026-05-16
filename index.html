@@ -20,8 +20,9 @@
       --text-3: rgba(255, 255, 255, 0.40);
       --text-4: rgba(255, 255, 255, 0.25);
 
-      --mint:      #6ee7b7;
-      --mint-glow: rgba(110, 231, 183, 0.45);
+      --mint:      #3ecf8e;
+      --mint-soft: rgba(62, 207, 142, 0.10);
+      --mint-glow: rgba(62, 207, 142, 0.45);
       --amber:     #fbbf24;
       --red:       #f87171;
 
@@ -35,7 +36,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
-      background: var(--bg);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -46,16 +46,22 @@
     }
 
     body {
+      background-color: #000;
+      /* Atmospheric mint glow — strong at top-center, fading into pure black.
+         Secondary ambient at bottom-right barely there. Both fixed so they don't scroll. */
       background-image:
-        radial-gradient(at 20% 0%,   rgba(110, 231, 183, 0.05), transparent 50%),
-        radial-gradient(at 85% 100%, rgba(147, 197, 253, 0.03), transparent 55%);
+        radial-gradient(ellipse 75% 55% at 50% -12%, rgba(62, 207, 142, 0.22) 0%, rgba(62, 207, 142, 0.08) 35%, transparent 65%),
+        radial-gradient(circle 700px at 95% 100%, rgba(62, 207, 142, 0.04) 0%, transparent 65%);
       background-attachment: fixed;
+      background-repeat: no-repeat;
+      overflow-x: hidden;
     }
 
     .wrap {
       max-width: 960px;
       margin: 0 auto;
-      padding: 36px 24px 80px;
+      padding: 40px 24px 100px;
+      position: relative;
     }
 
     /* ── Header ─────────────────────────────────────────────── */
@@ -63,7 +69,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 32px;
+      margin-bottom: 56px;
     }
     .brand {
       font-size: 11px;
@@ -82,7 +88,7 @@
       transition: all 0.3s var(--ease);
     }
     .sync-dot.configured {
-      background: rgba(110, 231, 183, 0.45);
+      background: rgba(62, 207, 142, 0.45);
       animation: pulse 2.2s infinite;
     }
     .sync-dot.syncing { background: var(--amber); }
@@ -114,22 +120,22 @@
     .gear:active { transform: scale(0.94); }
 
     .greeting {
-      font-size: 30px;
+      font-size: 36px;
       font-weight: 500;
-      letter-spacing: -0.022em;
-      line-height: 1.18;
+      letter-spacing: -0.025em;
+      line-height: 1.12;
       color: var(--text);
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
     .date-line {
-      font-size: 14px;
+      font-size: 14.5px;
       font-weight: 400;
       color: var(--text-3);
-      letter-spacing: 0;
+      letter-spacing: -0.005em;
     }
 
     /* ── Tile grid ──────────────────────────────────────────── */
-    .tiles-region { margin-top: 40px; }
+    .tiles-region { margin-top: 64px; }
 
     .grid {
       display: grid;
@@ -175,11 +181,11 @@
       z-index: -1;
       opacity: 0.65;
     }
-    .tile[data-category="fitness"]::after   { background: radial-gradient(at 0% 0%, rgba(110, 231, 183, 0.07), transparent 60%); }
-    .tile[data-category="rest"]::after      { background: radial-gradient(at 0% 0%, rgba(147, 197, 253, 0.06), transparent 60%); }
-    .tile[data-category="mind"]::after      { background: radial-gradient(at 0% 0%, rgba(167, 139, 250, 0.05), transparent 60%); }
-    .tile[data-category="nutrition"]::after { background: radial-gradient(at 0% 0%, rgba(251, 191, 36, 0.05), transparent 60%); }
-    .tile[data-category="finance"]::after   { background: radial-gradient(at 0% 0%, rgba(110, 231, 183, 0.04), transparent 60%); }
+    .tile[data-category="fitness"]::after   { background: radial-gradient(at 100% 0%, rgba(62, 207, 142, 0.12), transparent 55%); }
+    .tile[data-category="rest"]::after      { background: radial-gradient(at 100% 0%, rgba(147, 197, 253, 0.09), transparent 55%); }
+    .tile[data-category="mind"]::after      { background: radial-gradient(at 100% 0%, rgba(167, 139, 250, 0.08), transparent 55%); }
+    .tile[data-category="nutrition"]::after { background: radial-gradient(at 100% 0%, rgba(251, 191, 36, 0.08), transparent 55%); }
+    .tile[data-category="finance"]::after   { background: radial-gradient(at 100% 0%, rgba(62, 207, 142, 0.06), transparent 55%); }
 
     .tile:hover {
       border-color: var(--border-hover);
@@ -313,7 +319,7 @@
     .field input:focus {
       outline: none;
       border-color: var(--mint);
-      background: rgba(110, 231, 183, 0.04);
+      background: rgba(62, 207, 142, 0.04);
     }
 
     .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
@@ -397,13 +403,19 @@
 
     /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 480px) {
-      .wrap { padding: 28px 16px 60px; }
-      .brand-row { margin-bottom: 26px; }
-      .greeting { font-size: 26px; }
+      .wrap { padding: 32px 18px 80px; }
+      .brand-row { margin-bottom: 44px; }
+      .greeting { font-size: 30px; letter-spacing: -0.022em; }
+      .date-line { font-size: 13.5px; }
+      .tiles-region { margin-top: 52px; }
       .grid { gap: 14px; }
       .tile { padding: 22px; min-height: 148px; border-radius: 22px; }
       .tile-icon { font-size: 26px; margin-bottom: 14px; }
       .sheet { padding: 24px; border-radius: 24px; }
+      body {
+        background-image:
+          radial-gradient(ellipse 90% 35% at 50% -8%, rgba(62, 207, 142, 0.20) 0%, rgba(62, 207, 142, 0.06) 40%, transparent 70%);
+      }
     }
   </style>
 </head>
